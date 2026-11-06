@@ -1,0 +1,33 @@
+<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>俠影江湖 A3-3 動作編輯器</title><style>body{margin:0;background:#111827;color:white;font:16px -apple-system,sans-serif}main{max-width:640px;margin:auto;padding:16px}h2{font-size:22px}p{color:#cbd5e1}canvas{width:100%;height:430px;background:#28364b;border-radius:15px;touch-action:none}button{padding:12px;margin:4px;border:0;border-radius:9px;background:#dce8f8;color:#152438;font-size:16px}button.on{background:#5dd6c5}textarea{width:100%;height:100px;box-sizing:border-box;background:#18263a;color:white}label{display:block;margin:12px 0}input{width:100%}</style><main><h2>俠影江湖 A3-3｜觸控動畫編輯器</h2><p>橘色＝右側、藍色＝左側。點選關鍵影格後，手指拖動彩色關節點。面向右側 →</p><canvas id="stage"></canvas><div id="keys"></div><button id="play">▶ 播放／暫停</button><button id="reset">重設當前影格</button><label>播放速度 <span id="speedLabel">1.0</span> 倍<input id="speed" type="range" min=".2" max="2" step=".1" value="1"></label><button id="save">儲存到此瀏覽器</button><button id="export">匯出 JSON</button><button id="import">匯入 JSON</button><textarea id="data" placeholder="匯出資料會顯示在這裡；也可貼上先前匯出的 JSON 重新匯入"></textarea><p id="msg">這是動作骨架編輯工具，正式人物美術尚未套用。</p></main><script>
+const c=document.querySelector('#stage'),ctx=c.getContext('2d'),names=['左手肘','左手腕','右手肘','右手腕','左膝','左腳踝','右膝','右腳踝'],colors=['#67b8ed','#67b8ed','#efa95c','#efa95c','#67b8ed','#67b8ed','#efa95c','#efa95c'];
+const A=[[65,139],[94,118],[-55,137],[-82,115],[-32,262],[-66,310],[34,256],[75,309]];
+const B=[[-55,137],[-82,115],[65,139],[94,118],[34,256],[75,309],[-32,262],[-66,310]];
+const mid=[[6,160],[24,193],[-12,150],[-32,184],[13,252],[15,307],[-17,255],[-28,302]];
+const clone=x=>JSON.parse(JSON.stringify(x));
+const defaults=[clone(A),clone(mid),clone(B),clone(mid).map(([x,y])=>[-x,y])];
+let frames=clone(defaults),selected=0,playing=false,phase=0,last=0,drag=-1;
+const keyBox=document.querySelector('#keys'),msg=document.querySelector('#msg');
+for(let i=0;i<4;i++){const b=document.createElement('button');b.textContent='影格 '+(i+1);b.onclick=()=>{playing=false;selected=i;phase=i;render()};keyBox.append(b)}
+function setup(){const r=c.getBoundingClientRect(),d=devicePixelRatio||1;c.width=Math.round(r.width*d);c.height=Math.round(r.height*d);ctx.setTransform(d,0,0,d,0,0)}
+function interpolate(a,b,t){return a.map((p,i)=>p.map((v,j)=>v+(b[i][j]-v)*t))}
+function line(a,b,color,width){ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke()}
+function render(){setup();let w=c.clientWidth,h=c.clientHeight,scale=Math.min(w/320,h/410),ox=w/2,oy=36;ctx.save();ctx.translate(ox,oy);ctx.scale(scale,scale);
+let i=Math.floor(phase)%4,t=phase-Math.floor(phase),p=playing?interpolate(frames[i],frames[(i+1)%4],t):frames[selected];
+const sh=[0,108],hip=[0,226];line(sh,hip,'#dce6f5',27);
+for(let side of [2,0]){let shoulder=[side===0?8:-8,112];line(shoulder,p[side],colors[side],15);line(p[side],p[side+1],colors[side],12)}
+for(let side of [6,4]){let root=[side===4?9:-9,226];line(root,p[side],colors[side],19);line(p[side],p[side+1],colors[side],15)}
+ctx.fillStyle='#e7c5a2';ctx.beginPath();ctx.arc(0,73,24,0,7);ctx.fill();ctx.fillStyle='#303847';ctx.fillRect(-22,45,42,12);
+if(!playing)p.forEach(([x,y],j)=>{ctx.fillStyle=colors[j];ctx.strokeStyle='white';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,10,0,7);ctx.fill();ctx.stroke()});
+ctx.restore();[...keyBox.children].forEach((b,i)=>b.classList.toggle('on',i===selected&&!playing))}
+function coords(e){let r=c.getBoundingClientRect(),s=Math.min(r.width/320,r.height/410);return [(e.clientX-r.left-r.width/2)/s,(e.clientY-r.top-36)/s]}
+c.addEventListener('pointerdown',e=>{if(playing)return;const p=coords(e);let best=24;drag=-1;frames[selected].forEach((q,i)=>{let d=Math.hypot(q[0]-p[0],q[1]-p[1]);if(d<best){best=d;drag=i}});if(drag>=0)c.setPointerCapture(e.pointerId)});
+c.addEventListener('pointermove',e=>{if(drag<0)return;let p=coords(e);frames[selected][drag]=[Math.max(-145,Math.min(145,p[0])),Math.max(95,Math.min(360,p[1]))];render()});
+for(let evt of ['pointerup','pointercancel'])c.addEventListener(evt,()=>drag=-1);
+document.querySelector('#play').onclick=()=>{playing=!playing;phase=selected;last=0;render()};
+document.querySelector('#reset').onclick=()=>{frames[selected]=clone(defaults[selected]);render()};
+document.querySelector('#save').onclick=()=>{try{localStorage.setItem('xiaying-a3-3',JSON.stringify(frames));msg.textContent='已儲存到目前瀏覽器'}catch(e){msg.textContent='瀏覽器儲存失敗，請使用 JSON 匯出備份'}};
+document.querySelector('#export').onclick=()=>{document.querySelector('#data').value=JSON.stringify({version:'A3-3',frames});msg.textContent='已產生 JSON，可全選複製保存'};
+document.querySelector('#import').onclick=()=>{try{let x=JSON.parse(document.querySelector('#data').value),f=x.frames;if(!Array.isArray(f)||f.length!==4||f.some(a=>!Array.isArray(a)||a.length!==8||a.some(p=>!Array.isArray(p)||p.length!==2||p.some(n=>!Number.isFinite(n)))))throw Error();frames=clone(f);msg.textContent='已匯入';render()}catch(e){msg.textContent='JSON 格式不正確'}};
+try{let f=JSON.parse(localStorage.getItem('xiaying-a3-3'));if(Array.isArray(f)&&f.length===4)frames=f}catch(e){}
+function tick(ts){if(playing){if(last)phase=(phase+(ts-last)/1000*Number(document.querySelector('#speed').value)*2)%4;selected=Math.floor(phase);render()}last=ts;requestAnimationFrame(tick)}render();requestAnimationFrame(tick);
+</script></html>

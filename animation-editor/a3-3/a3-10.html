@@ -1,0 +1,105 @@
+<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>俠影江湖 A3-10 跑步動畫</title><style>body{margin:0;background:#111827;color:#fff;font:16px -apple-system,"PingFang TC",sans-serif}main{max-width:640px;margin:auto;padding:16px}h2{font-size:22px}p{color:#cbd5e1;line-height:1.5}canvas{width:100%;height:430px;background:#28364b;border-radius:15px;touch-action:none}button{padding:12px;margin:4px;border:0;border-radius:9px;background:#dce8f8;color:#152438;font-size:16px}button.on,.primary{background:#71d3c4}textarea{width:100%;height:100px;box-sizing:border-box;background:#18263a;color:#fff}label{display:block;margin:12px 0}input{width:100%}#msg{min-height:2em}</style><main><h2>俠影江湖 A3-10｜軀幹自然前傾</h2><p>橘色＝右側四肢，藍色＝左側四肢。面向右側 →。暫停後拖曳紫色肩膀、綠色腰部控制點；可逐格調整軀幹。</p><canvas id="stage"></canvas><div id="keys"></div><button id="preset" class="primary">載入我的 A3-3 動作</button><button id="play">▶ 播放／暫停</button><button id="reset">重設當前影格</button><label>播放速度 <span id="speedLabel">1.0</span> 倍<input id="speed" type="range" min=".2" max="2" step=".1" value="1"></label><label><input id="bobEnabled" type="checkbox" checked style="width:auto" /> 啟用跑步上下晃動</label><label>晃動幅度 <span id="bobLabel">8</span> 像素<input id="bobAmount" type="range" min="0" max="16" step="1" value="8"></label><label><input id="groundEnabled" type="checkbox" checked style="width:auto" /> 顯示地面與腳掌落地提示</label><label><input id="lockEnabled" type="checkbox" checked style="width:auto" /> 啟用智慧腳掌落地鎖定</label><label><input id="armEnabled" type="checkbox" checked style="width:auto" /> 啟用輕度手臂優化（取消勾選可比較）</label><button id="torsoPreset" class="primary">套用輕微前傾（四影格）</button><button id="torsoNeutral">恢復直立軀幹（四影格）</button><button id="torsoReset">重設當前影格軀幹</button><button id="save">儲存到此瀏覽器</button><button id="export">匯出 JSON</button><button id="import">匯入 JSON</button><textarea id="data" placeholder="匯出 JSON 後可複製備份；亦可貼入 JSON 再匯入"></textarea><p id="msg">A3-10 預設輕微前傾。可切換直立／前傾並拖曳肩膀、腰部；保留四肢座標與 8 px 晃動。</p></main><script>
+const c=document.querySelector('#stage'),ctx=c.getContext('2d'),colors=['#67b8ed','#67b8ed','#efa95c','#efa95c','#67b8ed','#67b8ed','#efa95c','#efa95c'],store='xiaying-a3-10-torso-v1';
+const clone=x=>JSON.parse(JSON.stringify(x));
+// 每影格依序：左肘、左腕、右肘、右腕、左膝、左踝、右膝、右踝。
+// 第1格右腿前左臂前；第3格左腿前右臂前；第2/4格為不同推蹬與收腿過渡。
+const defaults=[[[-41.583477959042014,150.361005052258],[-55.03983956188053,200.0910370627482],[42.957576458791294,170.2530178564541],[92.68760846928149,153.2863010528751],[66.35994446372786,248.35842107292984],[112.57962127347751,299.25857148366686],[-33.372093023255815,275.7170542635659],[-94.71317829457365,310.36046511627904]],[[35.351806857186894,166.74266265571362],[83.91172046743024,154.45641945312195],[-58.257665162559306,151.23859385244313],[-61.47549076323809,199.50597786262477],[-30.51162790697674,274.4457364341085],[-91.53488372093022,306.54651162790697],[58.16279069767442,255.69379844961242],[103.93023255813954,304.6395348837209]],[[-59.72031316286785,154.74894905318362],[-43.046125959350555,205.35656986385894],[48.808168460025435,174.0559026572563],[86.5444868679856,164.6949554552817],[71.91800686490029,251.86877627367036],[109.65432527286043,305.6942226850244],[-39.828300358671775,269.1280226773111],[-88.09568436885341,312.71493308650537]],[[32.426510856569834,171.7156658567626],[86.25195726792387,160.89207065447945],[-55.039839561880555,160.8920706544795],[-38.658181958424954,197.1657410621312],[-31.782945736434115,276.98837209302326],[-83.27131782945737,305.9108527131782],[76.01342126576417,252.45383547379376],[118.13768367464996,300.42868988391365]]];
+const neutralTorso=()=>Array.from({length:4},()=>[[0,108],[0,226]]);
+const leanTorso=()=>[[[9,110],[0,226]],[[11,112],[1,227]],[[9,110],[0,226]],[[11,112],[1,227]]];
+let frames=clone(defaults),torsos=leanTorso(),selected=0,playing=false,phase=0,last=0,drag=-1;
+const keyBox=document.querySelector('#keys'),msg=document.querySelector('#msg'),speed=document.querySelector('#speed');
+for(let i=0;i<4;i++){const b=document.createElement('button');b.textContent='影格 '+(i+1);b.onclick=()=>{playing=false;selected=i;phase=i;render()};keyBox.append(b)}
+function setup(){const r=c.getBoundingClientRect(),d=devicePixelRatio||1;c.width=Math.round(r.width*d);c.height=Math.round(r.height*d);ctx.setTransform(d,0,0,d,0,0)}
+function interpolate(a,b,t){return a.map((p,i)=>p.map((v,j)=>v+(b[i][j]-v)*t))}
+function line(a,b,color,width){ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke()}
+function render(){setup();let w=c.clientWidth,h=c.clientHeight,scale=Math.min(w/320,h/410),ox=w/2,oy=36;ctx.save();ctx.translate(ox,oy);ctx.scale(scale,scale);
+let i=Math.floor(phase)%4,t=phase-Math.floor(phase),p=playing?interpolate(frames[i],frames[(i+1)%4],t*t*(3-2*t)):frames[selected];
+p=clone(p);
+const torso=playing?interpolate(torsos[i],torsos[(i+1)%4],t*t*(3-2*t)):torsos[selected];
+const sh=[...torso[0]],hip=[...torso[1]];
+// 軀幹位移只在畫面上傳遞給四肢，關節原始資料維持不變。
+const sd=[sh[0],sh[1]-108],hd=[hip[0],hip[1]-226];
+for(const j of [0,1,2,3]){p[j][0]+=sd[0];p[j][1]+=sd[1]}
+for(const j of [4,5,6,7]){p[j][0]+=hd[0];p[j][1]+=hd[1]}
+// 接地修正只套用於渲染姿勢，不寫入使用者原始影格。
+// 只在播放時移動整體骨架，絕不改寫任何關節座標。
+const bobOn=document.querySelector('#bobEnabled').checked;
+const bobAmp=Number(document.querySelector('#bobAmount').value);
+const bob=bobOn&&playing ? -bobAmp*(1-Math.cos(phase*Math.PI*2))/2 : 0;
+
+// 兩腳交替短暫支撐：右腳在影格2附近，左腳在影格4附近。
+// 著地中心維持原始腳踝的水平位置；接地時鎖定世界座標的高度。
+// 過渡區以 smoothstep 漸入漸出，避免腳掌突然吸附或彈開。
+let lockFoot=-1,lockWeight=0;
+if(playing&&document.querySelector('#lockEnabled').checked){
+  const smooth=x=>{x=Math.max(0,Math.min(1,x));return x*x*(3-2*x)};
+  const contact=(center)=>{let d=Math.abs(((phase-center+2+4)%4)-2);
+    return d<=.18?1:d>=.42?0:1-smooth((d-.18)/.24)};
+  // 以最新 A3-6 使用者影格 2 / 4 的落地姿勢為基準。
+  const right=contact(1),left=contact(3);
+  lockFoot=right>=left?7:5;lockWeight=Math.max(right,left);
+  if(lockWeight>0){
+    const center=lockFoot===7?1:3;
+    const anchor=frames[center][lockFoot];
+    const dx=(anchor[0]-p[lockFoot][0])*lockWeight;
+    // 固定世界高度：接地中心當下的 bob 也是 0，維持原始落地腳踝高度。
+    const dy=(anchor[1]-p[lockFoot][1]-bob)*lockWeight;
+    p[lockFoot][0]+=dx;p[lockFoot][1]+=dy;
+    const knee=lockFoot-1;
+    // 膝蓋只吸收部分修正，避免整條腿被腳踝硬拉。
+    p[knee][0]+=dx*.26;p[knee][1]+=dy*.3;
+  }
+}
+ctx.translate(0,bob);
+const armOn=document.querySelector('#armEnabled').checked;
+const shoulderShift=armOn&&playing?Math.sin(phase*Math.PI/2)*2:0;
+if(armOn){
+ for(const j of [0,2]){
+  const sx=(j===0?8:-8)+sd[0];
+  const dx=(sx-p[j][0])*.06,dy=(sh[1]+4-p[j][1])*.04;
+  p[j][0]+=dx;p[j][1]+=dy;
+  p[j+1][0]+=dx*.5;p[j+1][1]+=dy*.5;
+ }
+}
+if(document.querySelector('#groundEnabled').checked){
+  ctx.save();ctx.translate(0,-bob);
+  ctx.strokeStyle='#6e8ca1';ctx.lineWidth=2;ctx.setLineDash([7,8]);
+  ctx.beginPath();ctx.moveTo(-140,322);ctx.lineTo(140,322);ctx.stroke();ctx.setLineDash([]);
+  ctx.restore();
+  for(const idx of [5,7]){
+    const foot=p[idx],gap=322-(foot[1]+bob);
+    if(gap>=0&&gap<42){
+      ctx.fillStyle=idx===5?'rgba(103,184,237,.25)':'rgba(239,169,92,.25)';
+      ctx.beginPath();ctx.ellipse(foot[0],322-bob,Math.max(5,17-gap*.25),3,0,0,Math.PI*2);ctx.fill();
+    }
+  }
+}
+line(sh,hip,'#dce6f5',27);
+for(let side of [2,0]){let shoulder=[sh[0]+(side===0?8:-8)+(side===0?shoulderShift:-shoulderShift),sh[1]+4];line(shoulder,p[side],colors[side],15);line(p[side],p[side+1],colors[side],12)}
+for(let side of [6,4]){let root=[hip[0]+(side===4?9:-9),hip[1]];line(root,p[side],colors[side],19);line(p[side],p[side+1],colors[side],15)}
+ctx.fillStyle='#e7c5a2';ctx.beginPath();ctx.arc(sh[0],sh[1]-35,24,0,7);ctx.fill();ctx.fillStyle='#303847';ctx.fillRect(sh[0]-22,sh[1]-63,42,12);
+if(!playing){for(const [j,q] of [sh,hip].entries()){ctx.fillStyle=j===0?'#bc93ff':'#7ce1a0';ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.beginPath();ctx.arc(q[0],q[1],13,0,Math.PI*2);ctx.fill();ctx.stroke()}}
+if(!playing)p.forEach(([x,y],j)=>{ctx.fillStyle=colors[j];ctx.strokeStyle='white';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,10,0,7);ctx.fill();ctx.stroke()});
+ctx.restore();[...keyBox.children].forEach((b,i)=>b.classList.toggle('on',i===selected&&!playing))}
+function coords(e){let r=c.getBoundingClientRect(),s=Math.min(r.width/320,r.height/410);return [(e.clientX-r.left-r.width/2)/s,(e.clientY-r.top-36)/s]}
+c.addEventListener('pointerdown',e=>{if(playing)return;const p=coords(e);let best=24;drag=-1;[...frames[selected],...torsos[selected]].forEach((q,i)=>{let d=Math.hypot(q[0]-p[0],q[1]-p[1]);if(d<best){best=d;drag=i}});if(drag>=0)c.setPointerCapture(e.pointerId)});
+c.addEventListener('pointermove',e=>{if(drag<0)return;let p=coords(e);if(drag<8){frames[selected][drag]=[Math.max(-145,Math.min(145,p[0])),Math.max(95,Math.min(360,p[1]))]}else{let j=drag-8;torsos[selected][j]=[Math.max(-65,Math.min(65,p[0])),Math.max(j===0?90:185,Math.min(j===0?165:270,p[1]))]}render()});
+for(let evt of ['pointerup','pointercancel'])c.addEventListener(evt,()=>drag=-1);
+document.querySelector('#preset').onclick=()=>{playing=false;frames=clone(defaults);torsos=neutralTorso();selected=0;phase=0;msg.textContent='已載入 A3-10 原始 A3-3 自訂四影格動作';render()};
+document.querySelector('#play').onclick=()=>{playing=!playing;phase=selected;last=0;render()};
+document.querySelector('#torsoPreset').onclick=()=>{torsos=leanTorso();msg.textContent='已套用四影格輕微前傾；腿部與手臂原始座標不變';render()};
+document.querySelector('#torsoNeutral').onclick=()=>{torsos=neutralTorso();msg.textContent='已恢復四影格直立軀幹';render()};
+document.querySelector('#torsoReset').onclick=()=>{torsos[selected]=[[0,108],[0,226]];msg.textContent='當前影格軀幹已重設';render()};
+document.querySelector('#reset').onclick=()=>{frames[selected]=clone(defaults[selected]);render()};
+document.querySelector('#bobEnabled').onchange=()=>{msg.textContent=document.querySelector('#bobEnabled').checked?'已開啟上下晃動，可調整幅度':'已關閉上下晃動，恢復原始跑步效果';render()};
+document.querySelector('#bobAmount').oninput=()=>{document.querySelector('#bobLabel').textContent=document.querySelector('#bobAmount').value;render()};
+document.querySelector('#groundEnabled').onchange=render;
+document.querySelector('#armEnabled').onchange=render;
+document.querySelector('#lockEnabled').onchange=()=>{msg.textContent=document.querySelector('#lockEnabled').checked?'腳掌落地鎖定已開啟':'腳掌落地鎖定已關閉，可比較原始動作';render()};
+speed.oninput=()=>document.querySelector('#speedLabel').textContent=Number(speed.value).toFixed(1);
+document.querySelector('#save').onclick=()=>{try{localStorage.setItem(store,JSON.stringify({frames,torsos}));msg.textContent='A3-10 已儲存到目前瀏覽器'}catch(e){msg.textContent='儲存失敗，請使用 JSON 匯出備份'}};
+document.querySelector('#export').onclick=()=>{document.querySelector('#data').value=JSON.stringify({version:'A3-10',frames,torsos});msg.textContent='已產生 JSON，可全選複製保存'};
+document.querySelector('#import').onclick=()=>{try{let x=JSON.parse(document.querySelector('#data').value),f=x.frames;if(!Array.isArray(f)||f.length!==4||f.some(a=>!Array.isArray(a)||a.length!==8||a.some(p=>!Array.isArray(p)||p.length!==2||p.some(n=>!Number.isFinite(n)))))throw Error();frames=clone(f);if(x.torsos&&Array.isArray(x.torsos)&&x.torsos.length===4&&x.torsos.every(t=>Array.isArray(t)&&t.length===2&&t.every(p=>Array.isArray(p)&&p.length===2&&p.every(Number.isFinite))))torsos=clone(x.torsos);else torsos=Array.from({length:4},()=>[[0,108],[0,226]]);playing=false;selected=0;phase=0;msg.textContent='已匯入四影格動作';render()}catch(e){msg.textContent='JSON 格式不正確'}};
+try{let f=JSON.parse(localStorage.getItem(store));if(f&&Array.isArray(f.frames)&&f.frames.length===4){frames=f.frames;if(Array.isArray(f.torsos)&&f.torsos.length===4)torsos=f.torsos}else if(Array.isArray(f)&&f.length===4&&f.every(a=>Array.isArray(a)&&a.length===8))frames=f}catch(e){}
+function tick(ts){if(playing){if(last)phase=(phase+(ts-last)/1000*Number(speed.value)*2)%4;selected=Math.floor(phase);render()}last=ts;requestAnimationFrame(tick)}render();requestAnimationFrame(tick);
+</script></html>

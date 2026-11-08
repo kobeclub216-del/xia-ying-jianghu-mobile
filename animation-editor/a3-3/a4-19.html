@@ -1,0 +1,220 @@
+<!doctype html><html lang="zh-Hant"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>俠影江湖 A4-19 跑步動畫</title><style>body{margin:0;background:#111827;color:#fff;font:16px -apple-system,"PingFang TC",sans-serif}main{max-width:640px;margin:auto;padding:16px}h2{font-size:22px}p{color:#cbd5e1;line-height:1.5}canvas{width:100%;height:430px;background:#28364b;border-radius:15px;touch-action:none}button{padding:12px;margin:4px;border:0;border-radius:9px;background:#dce8f8;color:#152438;font-size:16px}button.on,.primary{background:#71d3c4}textarea{width:100%;height:100px;box-sizing:border-box;background:#18263a;color:#fff}label{display:block;margin:12px 0}input{width:100%}#msg{min-height:2em}</style><main><h2>俠影江湖 A4-19｜骨架與美術微調</h2><p>A4-12 造型方向的第二版分層美術：新增衣領、袖口、衣褶、靴帶、髮絲與臉部細節。保留 A3-10 骨架與 1.5 倍節奏；仍是向量美術精修版，尚非原畫拆件。</p><canvas id="stage"></canvas><div><button id="moveToggle" class="primary">停止水平移動</button><button id="moveReset">重設位置</button></div><label>水平移動速度 <span id="travelLabel">160</span> px/s<input id="travelSpeed" type="range" min="60" max="300" step="10" value="160"></label><p>移動測試以角色保持在畫面中央、背景向左捲動來模擬向右奔跑。地面刻度可觀察移動速度；腳掌是否滑動仍需依實際遊戲碰撞與位移再驗證。</p><section style="border:1px solid #536782;padding:12px;border-radius:12px"><b>編輯模式</b><div><button id="rigMode" class="primary">骨架調整</button><button id="artMode">美術調整</button></div><label>選擇部件<select id="partChoice" style="width:100%;font-size:17px;padding:8px"><option value="head">頭部</option><option value="hair">馬尾</option><option value="torso">軀幹</option><option value="upper">上臂</option><option value="fore">前臂</option><option value="hand">手掌</option><option value="thigh">大腿</option><option value="shin">小腿</option><option value="boot">靴子</option><option value="coat">衣袍</option><option value="sash">腰帶</option></select></label><label>水平偏移 <output id="dxVal">0</output> px<input id="dxRange" type="range" min="-40" max="40" value="0"></label><label>垂直偏移 <output id="dyVal">0</output> px<input id="dyRange" type="range" min="-40" max="40" value="0"></label><label>大小 <output id="scVal">100</output>%<input id="scRange" type="range" min="50" max="160" step="5" value="100"></label><label>角度 <output id="rotVal">0</output>°<input id="rotRange" type="range" min="-45" max="45" value="0"></label><button id="resetPart">重設所選部件</button><button id="resetParts">重設全部美術部件</button></section><section style="border:1px solid #526c89;padding:12px;border-radius:12px"><b>動畫狀態</b><div><button id="idleState">待機</button><button id="walkState">走路</button><button id="runState" class="primary">跑步</button></div><p id="stateInfo">跑步：已套用你的最新四影格與美術偏移，1.5 倍速。</p></section><button id="approvedRestore">恢復 A4-15 正式備份（三種動畫）</button><section style="padding:12px;border:1px solid #536782;border-radius:12px;margin:12px 0"><b>逐格動畫檢查</b><p style="font-size:13px">拖曳時間軸可暫停並檢查影格過渡；不會改動關節數值。</p><label>時間軸 <output id="timelineLabel">1.00</output> / 4<input id="timeline" type="range" min="0" max="3.99" step=".01" value="0"></label><div><button id="prevFrame">上一格</button><button id="nextFrame">下一格</button><button id="playFromHere">從此位置播放</button></div><label><input id="compareRig" type="checkbox" style="width:auto"/> 疊加顯示骨架（檢查 Sprite 對齊）</label></section><section style="padding:12px;border:1px solid #536782;border-radius:12px;margin:12px 0"><b>A4-19 動作比較工具</b><label><input id="onionEnabled" type="checkbox" style="width:auto"> 洋蔥皮：顯示前後影格骨架</label><label>洋蔥皮透明度 <output id="onionOpacityLabel">30</output>%<input id="onionOpacity" type="range" min="10" max="65" value="30"></label><label><input id="mirrorEnabled" type="checkbox" style="width:auto"> 左右鏡像預覽</label><label><input id="seamEnabled" type="checkbox" style="width:auto"> 顯示循環接縫（第4格→第1格）</label><p id="seamInfo" style="font-size:13px">開啟接縫檢查以比較最後與第一影格的關節差異。</p></section><section style="padding:12px;border:1px solid #536782;border-radius:12px;margin:12px 0"><b>A4-19 自然動態預覽</b><label><input id="breathEnabled" type="checkbox" checked style="width:auto"> 待機呼吸（只影響畫面）</label><label>呼吸幅度 <output id="breathLabel">3</output> px<input id="breathAmount" type="range" min="0" max="8" value="3"></label><label><input id="clothEnabled" type="checkbox" checked style="width:auto"> 衣袍與馬尾擺動</label><label>擺動幅度 <output id="clothLabel">100</output>%<input id="clothAmount" type="range" min="0" max="200" step="10" value="100"></label><label><input id="blendEnabled" type="checkbox" checked style="width:auto"> 切換動作時平滑過渡（約 0.25 秒）</label><p style="font-size:13px">以上效果不寫入骨架影格；關閉可比較原始動畫。</p></section><div id="keys"></div><label><input id="artEnabled" type="checkbox" checked style="width:auto"/> 顯示 A4-19 精修分層角色（取消勾選看原始骨架）</label><button id="preset" class="primary">載入我的 A3-3 動作</button><button id="play">▶ 播放／暫停</button><button id="reset">重設當前影格</button><div><button id="tempoSlow">慢速 0.6×</button><button id="tempoNormal" class="primary">正常 1.0×</button><button id="tempoFast">快速 1.5×</button></div><label>播放速度 <span id="speedLabel">1.0</span> 倍<input id="speed" type="range" min=".2" max="2" step=".1" value="1"></label><label><input id="bobEnabled" type="checkbox" checked style="width:auto" /> 啟用跑步上下晃動</label><label>晃動幅度 <span id="bobLabel">8</span> 像素<input id="bobAmount" type="range" min="0" max="16" step="1" value="8"></label><label><input id="groundEnabled" type="checkbox" checked style="width:auto" /> 顯示地面與腳掌落地提示</label><label><input id="lockEnabled" type="checkbox" checked style="width:auto" /> 啟用智慧腳掌落地鎖定</label><label><input id="armEnabled" type="checkbox" checked style="width:auto" /> 啟用輕度手臂優化（取消勾選可比較）</label><button id="torsoPreset" class="primary">套用輕微前傾（四影格）</button><button id="torsoNeutral">恢復直立軀幹（四影格）</button><button id="torsoReset">重設當前影格軀幹</button><button id="save">儲存到此瀏覽器</button><button id="export">匯出 JSON</button><button id="import">匯入 JSON</button><textarea id="data" placeholder="匯出 JSON 後可複製備份；亦可貼入 JSON 再匯入"></textarea><p id="msg">A4-19 新增時間軸逐格檢查與骨架疊圖；保留 A4-15 正式備份及三種動畫的獨立微調。</p></main><script>
+const c=document.querySelector('#stage'),ctx=c.getContext('2d'),colors=['#67b8ed','#67b8ed','#efa95c','#efa95c','#67b8ed','#67b8ed','#efa95c','#efa95c'],store='xiaying-a4-19-motion-v1';
+const clone=x=>JSON.parse(JSON.stringify(x));
+// 每影格依序：左肘、左腕、右肘、右腕、左膝、左踝、右膝、右踝。
+// 第1格右腿前左臂前；第3格左腿前右臂前；第2/4格為不同推蹬與收腿過渡。
+const defaults=[[[-41.583477959042014,150.361005052258],[-55.03983956188053,200.0910370627482],[42.957576458791294,170.2530178564541],[92.68760846928149,153.2863010528751],[53.07751938,251.244186047],[23.201550388,309.406976744],[-40.364341085,273.492248062],[-94.713178295,310.360465116]],[[35.351806857186894,166.74266265571362],[83.91172046743024,154.45641945312195],[-58.257665162559306,151.23859385244313],[-61.47549076323809,199.50597786262477],[-39.728682171,278.57751938],[-91.534883721,306.546511628],[48.627906977,262.368217054],[3.813953488,298.282945736]],[[-59.72031316286785,154.74894905318362],[-43.046125959350555,205.35656986385894],[48.808168460025435,174.0559026572563],[86.5444868679856,164.6949554552817],[56.573643411,260.143410853],[30.511627907,315.127906977],[-39.828300359,269.128022677],[-88.095684369,312.714933087]],[[32.426510856569834,171.7156658567626],[86.25195726792387,160.89207065447945],[-55.039839561880555,160.8920706544795],[-38.658181958424954,197.1657410621312],[-44.178294574,269.678294574],[-87.085271318,310.996124031],[58.162790698,257.282945736],[9.217054264,296.375968992]]];
+const neutralTorso=()=>Array.from({length:4},()=>[[0,108],[0,226]]);
+const leanTorso=()=>[[[9,110],[0,226]],[[11,112],[1,227]],[[9,110],[0,226]],[[11,112],[1,227]]];
+let frames=clone(defaults),torsos=clone([[[28.604651163,137.46124031],[0,226]],[[33.054263566,138.414728682],[1,227]],[[21.930232558,140.003875969],[0,226]],[[31.782945736,146.678294574],[1,227]]]),selected=0,playing=true,phase=0,last=0,drag=-1;
+const keyBox=document.querySelector('#keys'),msg=document.querySelector('#msg'),speed=document.querySelector('#speed');
+for(let i=0;i<4;i++){const b=document.createElement('button');b.textContent='影格 '+(i+1);b.onclick=()=>{playing=false;selected=i;phase=i;render()};keyBox.append(b)}
+const approvedData={"version":"A4-15","frames":[[[-41.583477959042014,150.361005052258],[-55.03983956188053,200.0910370627482],[42.957576458791294,170.2530178564541],[92.68760846928149,153.2863010528751],[53.07751938,251.244186047],[23.201550388,309.406976744],[-40.364341085,273.492248062],[-94.713178295,310.360465116]],[[-23,169],[-26,208],[8.263565891472858,170.8333333333333],[31,210],[-14,267],[-15,310],[15,267],[16,310]],[[-59.72031316286785,154.74894905318362],[-43.046125959350555,205.35656986385894],[48.808168460025435,174.0559026572563],[86.5444868679856,164.6949554552817],[56.573643411,260.143410853],[30.511627907,315.127906977],[-39.828300359,269.128022677],[-88.095684369,312.71493308650537]],[[32.426510856569834,171.7156658567626],[86.25195726792387,160.89207065447945],[-55.039839561880555,160.8920706544795],[-38.658181958424954,197.1657410621312],[-44.178294574,269.678294574],[-87.085271318,310.996124031],[58.162790698,257.282945736],[9.217054264,296.375968992]]],"torsos":[[[0,116],[0,226]],[[0,117],[0,226]],[[0,116],[0,226]],[[0,117],[0,226]]],"partSettings":{"torso":{"dx":0,"dy":0,"scale":1,"rot":0},"upper":{"dx":0,"dy":0,"scale":1,"rot":0},"fore":{"dx":0,"dy":0,"scale":1,"rot":0},"thigh":{"dx":0,"dy":0,"scale":1,"rot":0},"shin":{"dx":0,"dy":0,"scale":1,"rot":0},"boot":{"dx":0,"dy":0,"scale":1,"rot":0},"hand":{"dx":0,"dy":0,"scale":1,"rot":0},"coat":{"dx":19,"dy":0,"scale":1,"rot":0},"sash":{"dx":0,"dy":0,"scale":1,"rot":0},"hair":{"dx":-12,"dy":22,"scale":1,"rot":0},"head":{"dx":0,"dy":14,"scale":1,"rot":0}},"actionState":"idle","actionBank":{"idle":{"frames":[[[-41.583477959042014,150.361005052258],[-55.03983956188053,200.0910370627482],[42.957576458791294,170.2530178564541],[92.68760846928149,153.2863010528751],[53.07751938,251.244186047],[23.201550388,309.406976744],[-40.364341085,273.492248062],[-94.713178295,310.360465116]],[[-23,169],[-26,208],[8.263565891472858,170.8333333333333],[31,210],[-14,267],[-15,310],[15,267],[16,310]],[[-59.72031316286785,154.74894905318362],[-43.046125959350555,205.35656986385894],[48.808168460025435,174.0559026572563],[86.5444868679856,164.6949554552817],[56.573643411,260.143410853],[30.511627907,315.127906977],[-39.828300359,269.128022677],[-88.095684369,312.71493308650537]],[[32.426510856569834,171.7156658567626],[86.25195726792387,160.89207065447945],[-55.039839561880555,160.8920706544795],[-38.658181958424954,197.1657410621312],[-44.178294574,269.678294574],[-87.085271318,310.996124031],[58.162790698,257.282945736],[9.217054264,296.375968992]]],"torsos":[[[0,116],[0,226]],[[0,117],[0,226]],[[0,116],[0,226]],[[0,117],[0,226]]]},"walk":{"frames":[[[-21,164],[-26,207],[16.527131782945716,169.562015503876],[41,203],[21,266],[37,310],[-18,266],[-29,310]],[[23.83720930232558,165.11240310077514],[42.271317829457345,209.92635658914725],[-21.29457364341086,165.7480620155039],[-26.379844961240327,208.33720930232556],[-17.162790697674417,269.04263565891466],[-30.19379844961242,310.04263565891466],[16.527131782945716,272.22093023255815],[30.193798449612395,309.7248062015504]],[[-19.643757954413996,175.94864823170963],[-34.325581395348834,218.18992248062008],[18.38509005360792,172.43829303096916],[35.059277257125196,212.51484823942297],[24.472868217054252,266.5],[41.31782945736432,311.3139534883721],[-18.11627906976744,269.36046511627904],[-29.55813953488372,315.7635658914728]],[[23.83720930232558,172.74031007751933],[38,205],[-23,167],[-31,205],[-10.806201550387605,267.1356589147287],[-26.062015503875976,311.94961240310073],[23.51937984496123,270.3139534883721],[33.05426356589146,315.4457364341084]]],"torsos":[[[7,120],[0,226]],[[7,121],[9.534883720930232,227.72480620155042]],[[7,120],[0,226]],[[7,121],[0,226]]]}},"runBackup":{"frames":[[[-41.583477959042014,150.361005052258],[-55.03983956188053,200.0910370627482],[42.957576458791294,170.2530178564541],[92.68760846928149,153.2863010528751],[53.07751938,251.244186047],[23.201550388,309.406976744],[-40.364341085,273.492248062],[-94.713178295,310.360465116]],[[35.351806857186894,166.74266265571362],[83.91172046743024,154.45641945312195],[-58.257665162559306,151.23859385244313],[-61.47549076323809,199.50597786262477],[-39.728682171,278.57751938],[-91.534883721,306.546511628],[48.627906977,262.368217054],[3.813953488,298.282945736]],[[-59.72031316286785,154.74894905318362],[-43.046125959350555,205.35656986385894],[48.808168460025435,174.0559026572563],[86.5444868679856,164.6949554552817],[56.573643411,260.143410853],[30.511627907,315.127906977],[-39.828300359,269.128022677],[-88.095684369,312.71493308650537]],[[32.426510856569834,171.7156658567626],[86.25195726792387,160.89207065447945],[-55.039839561880555,160.8920706544795],[-38.658181958424954,197.1657410621312],[-44.178294574,269.678294574],[-87.085271318,310.996124031],[58.162790698,257.282945736],[9.217054264,296.375968992]]],"torsos":[[[28.604651163,137.46124031],[0,226]],[[33.054263566,138.414728682],[1,227]],[[21.930232558,140.003875969],[0,226]],[[31.782945736,146.678294574],[1,227]]]}};
+const originalActions={idle:clone(approvedData.actionBank.idle),walk:clone(approvedData.actionBank.walk),run:clone(approvedData.runBackup)};
+const actionBank=clone(originalActions);let actionState='idle',runBackup=clone(originalActions.run);
+frames=clone(originalActions.idle.frames);torsos=clone(originalActions.idle.torsos);
+function snapshotActive(){actionBank[actionState]={frames:clone(frames),torsos:clone(torsos)};runBackup=clone(actionBank.run)}
+function setStateButtons(){for(const [k,id] of [['idle','idleState'],['walk','walkState'],['run','runState']])document.querySelector('#'+id).classList.toggle('primary',k===actionState);document.querySelector('#stateInfo').textContent=actionState==='idle'?'待機：使用正式保存的四影格':actionState==='walk'?'走路：使用正式保存的四影格':'跑步：使用正式保存的四影格'}
+let transition=null,previewClock=0;
+function switchAction(next){if(next===actionState)return;const previousPose={frames:clone(frames),torsos:clone(torsos),phase};snapshotActive();if(!actionBank[next])return;frames=clone(actionBank[next].frames);torsos=clone(actionBank[next].torsos);actionState=next;selected=0;phase=0;last=0;drag=-1;transition=document.querySelector('#blendEnabled').checked&&playing?{pose:previousPose,elapsed:0,duration:.25}:null;speed.value=next==='run'?'1.5':next==='walk'?'0.8':'0.45';document.querySelector('#speedLabel').textContent=Number(speed.value).toFixed(1);setStateButtons();render()}
+document.querySelector('#idleState').onclick=()=>switchAction('idle');document.querySelector('#walkState').onclick=()=>switchAction('walk');document.querySelector('#runState').onclick=()=>switchAction('run');
+function completeExport(){snapshotActive();return {version:'A4-19',frames:clone(frames),torsos:clone(torsos),partSettings:clone(partSettings),actionState,actionBank:clone(actionBank),runBackup:clone(runBackup)}}
+function restoreApproved(){Object.assign(actionBank,clone(originalActions));runBackup=clone(originalActions.run);actionState='idle';frames=clone(originalActions.idle.frames);torsos=clone(originalActions.idle.torsos);partSettings=clone(approvedData.partSettings);selected=0;phase=0;playing=false;syncPart();setStateButtons();render()}
+setStateButtons();
+function setup(){const r=c.getBoundingClientRect(),d=devicePixelRatio||1;c.width=Math.round(r.width*d);c.height=Math.round(r.height*d);ctx.setTransform(d,0,0,d,0,0)}
+function interpolate(a,b,t){return a.map((p,i)=>p.map((v,j)=>v+(b[i][j]-v)*t))}
+function line(a,b,color,width){ctx.strokeStyle=color;ctx.lineWidth=width;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(...a);ctx.lineTo(...b);ctx.stroke()}
+let travel=0,moving=true;
+
+// 每個部件為獨立透明 SVG Sprite，採用同一個關節座標系；不覆寫任何 A3-10 關節
+const spriteSvg={
+torso:'<path d="M14 3 Q25 -3 36 3 L46 22 L42 86 Q25 98 8 86 L4 22Z" fill="#7188a5" stroke="#25364d" stroke-width="3"/><path d="M12 8 L27 33 L38 8 L32 4 L26 18 L18 4Z" fill="#f0e8d8"/><path d="M10 22 L25 40 L20 91 L8 86Z" fill="#4d6483"/><path d="M29 35 L33 84" stroke="#c6d0d6" stroke-width="2"/><path d="M14 7 Q25 3 35 7" fill="none" stroke="#d6dce2" stroke-width="2"/><path d="M15 14 L27 34 L37 14" fill="none" stroke="#f8efe0" stroke-width="3"/><path d="M11 39 Q22 47 13 78 M38 37 Q31 56 36 78" fill="none" stroke="#9eb0c2" stroke-width="2"/><path d="M7 82 L18 87 L37 84" fill="none" stroke="#273d56" stroke-width="3"/>',
+upper:'<path d="M8 2 Q20 -3 32 5 L34 57 Q19 65 7 57 L3 19Z" fill="#7489a6" stroke="#293a50" stroke-width="3"/><path d="M6 19 L30 24 M9 43 L31 45" stroke="#aab7c5" stroke-width="2"/><path d="M7 9 Q18 15 32 11 M9 31 Q21 36 32 29" fill="none" stroke="#c0cad3" stroke-width="2"/><path d="M9 50 L30 52" stroke="#334d6c" stroke-width="4"/>',
+fore:'<path d="M6 0 L30 0 L29 49 L8 51Z" fill="#e3e0d7" stroke="#3c4c60" stroke-width="3"/><path d="M7 27 L29 29 L29 51 L7 51Z" fill="#354c6c"/><path d="M10 34 L26 37 M10 42 L26 45" stroke="#7f91aa" stroke-width="2"/><path d="M8 5 L29 8 M8 16 L29 19" fill="none" stroke="#fff5e7" stroke-width="2"/><path d="M8 32 L29 34 M8 45 L29 47" stroke="#9aacc1" stroke-width="2"/><path d="M12 37 L25 39" stroke="#d6d3c9" stroke-width="2"/>',
+thigh:'<path d="M5 1 L34 1 L31 58 Q19 65 6 58Z" fill="#424959" stroke="#222c3b" stroke-width="3"/><path d="M9 12 L11 50" stroke="#6c7481" stroke-width="2"/><path d="M12 9 Q20 18 10 40 M26 12 L24 48" fill="none" stroke="#8c97a4" stroke-width="2"/><path d="M7 55 L30 55" stroke="#273448" stroke-width="3"/>',
+shin:'<path d="M6 0 L29 0 L27 62 L7 62Z" fill="#3c4555" stroke="#202a3a" stroke-width="3"/><path d="M8 18 L28 29 M8 35 L27 46 M8 51 L27 59" stroke="#9aa5b4" stroke-width="4"/><path d="M9 8 L26 13 M9 24 L27 30 M9 41 L26 47" stroke="#d0c9b7" stroke-width="2"/><path d="M15 3 L13 60" stroke="#667d96" stroke-width="2"/>',
+boot:'<path d="M5 2 L22 2 L25 12 L48 17 Q54 21 48 25 L6 25 Q2 21 5 2Z" fill="#293240" stroke="#161d29" stroke-width="3"/><path d="M5 23 L48 23" stroke="#b9b7aa" stroke-width="3"/><path d="M9 8 L24 11 M7 14 L27 17" stroke="#a9b8c8" stroke-width="2"/><path d="M9 20 L45 22" stroke="#5c6d81" stroke-width="2"/>',
+hand:'<path d="M6 1 Q17 -2 21 10 L17 28 Q11 33 5 25Z" fill="#e8c7a4" stroke="#8e7467" stroke-width="2"/><path d="M9 14 L17 18 M8 19 L16 23" stroke="#b18f7b" stroke-width="1.5"/>',
+coat:'<path d="M40 2 L71 8 L83 86 Q60 73 42 91 L17 78 L0 91 L18 26Z" fill="#657d9e" stroke="#2b3c53" stroke-width="3"/><path d="M30 14 L16 76 L38 86 L54 24Z" fill="#eee5d6" stroke="#6b7788" stroke-width="2"/><path d="M60 17 L70 73 M20 34 L9 75" stroke="#aab8c6" stroke-width="2"/><path d="M42 12 Q50 42 39 79 M57 24 L61 68 M23 39 L17 70" fill="none" stroke="#cad2d9" stroke-width="2"/><path d="M3 89 L16 77 L39 90 L61 77 L83 86" fill="none" stroke="#2a4967" stroke-width="3"/><path d="M29 18 L25 39" stroke="#f6eee0" stroke-width="3"/>',
+sash:'<path d="M3 5 L53 5 L53 15 L3 15Z" fill="#2d547c" stroke="#172d49" stroke-width="2"/><path d="M20 15 L28 15 L22 40 L13 42Z" fill="#3c658d"/><rect x="26" y="7" width="8" height="6" rx="1" fill="#d1b78b"/><path d="M7 9 L50 9 M17 20 L17 35" stroke="#8eb2d0" stroke-width="2"/><path d="M21 19 L28 20" stroke="#c9b48c" stroke-width="2"/>',
+hair:'<path d="M68 24 Q37 -2 19 17 Q8 22 4 40 Q22 25 35 34 Q16 45 1 55 Q39 52 60 36Z" fill="#252a35" stroke="#151b27" stroke-width="3"/><path d="M55 22 Q30 20 20 35" stroke="#526077" stroke-width="3"/><path d="M53 24 L45 41" stroke="#6488b1" stroke-width="5"/><path d="M9 47 Q24 38 31 28 M16 50 Q40 41 51 28 M19 18 Q34 8 53 21" fill="none" stroke="#647083" stroke-width="2"/><path d="M44 37 L51 43" stroke="#9ab3d0" stroke-width="3"/>',
+head:'<path d="M12 11 Q22 1 37 8 Q51 16 45 39 L37 47 L29 55 L13 47 Q6 34 12 11Z" fill="#e7c5a3" stroke="#927b6c" stroke-width="2"/><path d="M9 23 Q2 4 26 2 Q46 0 49 17 L36 13 L31 21 L20 14 L10 29Z" fill="#242a36"/><path d="M32 25 L43 24" stroke="#4b4140" stroke-width="2"/><ellipse cx="38" cy="29" rx="2.3" ry="3.2" fill="#232b35"/><path d="M45 36 L49 39 L44 40 M36 47 L43 46" stroke="#9d7467" stroke-width="1.7" fill="none"/><path d="M17 37 Q24 44 31 42" fill="none" stroke="#d5a98d" stroke-width="2"/><path d="M31 24 L43 23" stroke="#242a35" stroke-width="2.5"/><path d="M33 46 Q38 48 43 45" fill="none" stroke="#986f63" stroke-width="1.5"/><path d="M12 27 Q16 17 22 17" fill="none" stroke="#536077" stroke-width="2"/>'
+};
+const spriteView={torso:[0,0,50,100],upper:[0,0,38,65],fore:[0,0,36,55],thigh:[0,0,40,66],shin:[0,0,35,68],boot:[0,0,55,30],hand:[0,0,26,34],coat:[0,0,90,100],sash:[0,0,56,45],hair:[0,0,77,60],head:[0,0,55,60]};
+const spriteParts={};
+const partKeys=Object.keys(spriteView);
+const emptyPart=()=>({dx:0,dy:0,scale:1,rot:0});
+let partSettings=Object.assign(Object.fromEntries(partKeys.map(k=>[k,emptyPart()])),{coat:{dx:19,dy:0,scale:1,rot:0},hair:{dx:-12,dy:22,scale:1,rot:0},head:{dx:0,dy:14,scale:1,rot:0}}),editMode='rig';
+const setting=k=>partSettings[k]||emptyPart();
+function syncPart(){let s=setting(document.querySelector('#partChoice').value);for(let [a,b,c] of [['dxRange',s.dx,'dxVal'],['dyRange',s.dy,'dyVal'],['scRange',Math.round(s.scale*100),'scVal'],['rotRange',s.rot,'rotVal']]){document.querySelector('#'+a).value=b;document.querySelector('#'+c).textContent=b}}
+
+for(const [name,body] of Object.entries(spriteSvg)){
+ const svg='<svg xmlns="http://www.w3.org/2000/svg" width="'+spriteView[name][2]+'" height="'+spriteView[name][3]+'" viewBox="'+spriteView[name].join(' ')+'">'+body+'</svg>';
+ const img=new Image();img.src='data:image/svg+xml;charset=utf-8,'+encodeURIComponent(svg);img.onload=()=>render();spriteParts[name]=img;
+}
+
+function render(){setup();let w=c.clientWidth,h=c.clientHeight,scale=Math.min(w/320,h/410),ox=w/2,oy=36;ctx.save();ctx.translate(ox,oy);ctx.scale(scale,scale);if(document.querySelector('#mirrorEnabled').checked)ctx.scale(-1,1);
+ // 地面世界刻度與移動背景：角色維持視窗中心，相當於攝影機追蹤
+ ctx.save();ctx.fillStyle='#26384c';ctx.fillRect(-160,323,320,87);
+ ctx.strokeStyle='#8ea1b1';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(-160,322);ctx.lineTo(160,322);ctx.stroke();
+ const shift=((travel%40)+40)%40;
+ for(let x=-200-shift;x<200;x+=40){ctx.strokeStyle='#4d7282';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(x,327);ctx.lineTo(x+10,337);ctx.stroke();}
+ ctx.restore();
+let i=Math.floor(phase)%4,t=phase-Math.floor(phase),p=playing?interpolate(frames[i],frames[(i+1)%4],t*t*(3-2*t)):frames[selected];
+p=clone(p);
+let torso=playing?interpolate(torsos[i],torsos[(i+1)%4],t*t*(3-2*t)):torsos[selected];
+if(transition&&playing){const old=transition.pose,j=Math.floor(old.phase)%4,u=old.phase-Math.floor(old.phase),ease=x=>x*x*(3-2*x),v=ease(Math.min(1,transition.elapsed/transition.duration));p=interpolate(interpolate(old.frames[j],old.frames[(j+1)%4],ease(u)),p,v);torso=interpolate(interpolate(old.torsos[j],old.torsos[(j+1)%4],ease(u)),torso,v)}
+const sh=[...torso[0]],hip=[...torso[1]];
+// 軀幹位移只在畫面上傳遞給四肢，關節原始資料維持不變。
+const sd=[sh[0],sh[1]-108],hd=[hip[0],hip[1]-226];
+for(const j of [0,1,2,3]){p[j][0]+=sd[0];p[j][1]+=sd[1]}
+for(const j of [4,5,6,7]){p[j][0]+=hd[0];p[j][1]+=hd[1]}
+// 接地修正只套用於渲染姿勢，不寫入使用者原始影格。
+// 只在播放時移動整體骨架，絕不改寫任何關節座標。
+const bobOn=document.querySelector('#bobEnabled').checked;
+const bobAmp=Number(document.querySelector('#bobAmount').value);
+const bob=bobOn&&playing ? -(actionState==='run'?bobAmp:actionState==='walk'?2:1)*(1-Math.cos(phase*Math.PI*2))/2 : 0;
+
+// 兩腳交替短暫支撐：右腳在影格2附近，左腳在影格4附近。
+// 著地中心維持原始腳踝的水平位置；接地時鎖定世界座標的高度。
+// 過渡區以 smoothstep 漸入漸出，避免腳掌突然吸附或彈開。
+let lockFoot=-1,lockWeight=0;
+if(playing&&actionState==='run'&&document.querySelector('#lockEnabled').checked){
+  const smooth=x=>{x=Math.max(0,Math.min(1,x));return x*x*(3-2*x)};
+  const contact=(center)=>{let d=Math.abs(((phase-center+2+4)%4)-2);
+    return d<=.18?1:d>=.42?0:1-smooth((d-.18)/.24)};
+  // 以最新 A3-6 使用者影格 2 / 4 的落地姿勢為基準。
+  const right=contact(1),left=contact(3);
+  lockFoot=right>=left?7:5;lockWeight=Math.max(right,left);
+  if(lockWeight>0){
+    const center=lockFoot===7?1:3;
+    const anchor=frames[center][lockFoot];
+    const dx=(anchor[0]-p[lockFoot][0])*lockWeight;
+    // 固定世界高度：接地中心當下的 bob 也是 0，維持原始落地腳踝高度。
+    const dy=(anchor[1]-p[lockFoot][1]-bob)*lockWeight;
+    p[lockFoot][0]+=dx;p[lockFoot][1]+=dy;
+    const knee=lockFoot-1;
+    // 膝蓋只吸收部分修正，避免整條腿被腳踝硬拉。
+    p[knee][0]+=dx*.26;p[knee][1]+=dy*.3;
+  }
+}
+ctx.translate(0,bob);
+const armOn=document.querySelector('#armEnabled').checked;
+const shoulderShift=armOn&&playing?Math.sin(phase*Math.PI/2)*2:0;
+if(armOn){
+ for(const j of [0,2]){
+  const sx=(j===0?8:-8)+sd[0];
+  const dx=(sx-p[j][0])*.06,dy=(sh[1]+4-p[j][1])*.04;
+  p[j][0]+=dx;p[j][1]+=dy;
+  p[j+1][0]+=dx*.5;p[j+1][1]+=dy*.5;
+ }
+}
+if(document.querySelector('#groundEnabled').checked){
+  ctx.save();ctx.translate(0,-bob);
+  ctx.strokeStyle='#6e8ca1';ctx.lineWidth=2;ctx.setLineDash([7,8]);
+  ctx.beginPath();ctx.moveTo(-140,322);ctx.lineTo(140,322);ctx.stroke();ctx.setLineDash([]);
+  ctx.restore();
+  for(const idx of [5,7]){
+    const foot=p[idx],gap=322-(foot[1]+bob);
+    if(gap>=0&&gap<42){
+      ctx.fillStyle=idx===5?'rgba(103,184,237,.25)':'rgba(239,169,92,.25)';
+      ctx.beginPath();ctx.ellipse(foot[0],322-bob,Math.max(5,17-gap*.25),3,0,0,Math.PI*2);ctx.fill();
+    }
+  }
+}
+const art=document.querySelector('#artEnabled').checked;
+const limb=(a,b,c,d,width,color,trim)=>{line(a,b,trim,width+4);line(b,c,trim,width-1);line(a,b,color,width);line(b,c,color,width-5)};
+if(art){
+ const part=(kind,a,b,w=22,extra=0)=>{const img=spriteParts[kind];if(!img||!img.complete||!img.naturalWidth)return;const s=setting(kind),dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);ctx.save();ctx.translate(a[0]+s.dx,a[1]+s.dy);ctx.rotate(Math.atan2(-dx,dy)+s.rot*Math.PI/180);ctx.drawImage(img,-w*s.scale/2,-extra*s.scale,w*s.scale,(len+extra+4)*s.scale);ctx.restore()};
+ const stamp=(kind,x,y,w,h,angle=0)=>{const img=spriteParts[kind];if(!img||!img.complete||!img.naturalWidth)return;const s=setting(kind);ctx.save();ctx.translate(x+s.dx,y+s.dy);ctx.rotate(angle+s.rot*Math.PI/180);ctx.drawImage(img,-w*s.scale/2,-h*s.scale/2,w*s.scale,h*s.scale);ctx.restore()};
+ // 遠側肢體先畫，前側肢體後畫；每段沿相應關節旋轉
+ const leg=(side)=>{const root=[hip[0]+(side===4?9:-9),hip[1]],k=p[side],a=p[side+1];part('thigh',root,k,side===4?23:26);part('shin',k,a,side===4?18:20);stamp('boot',a[0]+5,a[1]+1,35,20,Math.atan2(a[1]-k[1],a[0]-k[0])*.1)};
+ const arm=(side)=>{const root=[sh[0]+(side===0?8:-8)+(side===0?shoulderShift:-shoulderShift),sh[1]+4];part('upper',root,p[side],side===0?20:23);part('fore',p[side],p[side+1],side===0?17:19);stamp('hand',p[side+1][0],p[side+1][1],14,16)};
+ leg(4);arm(0);
+ const dynamicScale=Number(document.querySelector('#clothAmount').value)/100;
+ const sway=playing?Math.sin(phase*Math.PI/2)*.12:0;
+ const clothSwing=document.querySelector('#clothEnabled').checked&&playing?Math.sin(previewClock*(actionState==='run'?12:actionState==='walk'?7:2))*(actionState==='run'?.13:actionState==='walk'?.07:.025)*dynamicScale:0;
+ const breath=document.querySelector('#breathEnabled').checked&&actionState==='idle'&&playing?Math.sin(previewClock*2.5)*Number(document.querySelector('#breathAmount').value):0;
+ stamp('coat',hip[0]-15+clothSwing*12,hip[1]+12,90,98,-.25+sway+clothSwing);
+ part('torso',[sh[0],sh[1]-breath],[hip[0],hip[1]],48,10);
+ stamp('sash',hip[0],hip[1]-16,56,20);
+ leg(6);arm(2);
+ const hx=sh[0]+8,hy=sh[1]-39;
+ stamp('hair',hx-27+clothSwing*10,hy-14,62,52,-.1+(playing?Math.sin(phase*Math.PI/2)*.08:0)+clothSwing*1.5);
+ stamp('head',hx+1,hy,47,54);
+ if(document.querySelector('#compareRig').checked){
+  ctx.save();ctx.globalAlpha=.8;ctx.setLineDash([4,4]);
+  line(sh,hip,'#f9e38b',2);
+  for(const side of [0,2]){const root=[sh[0]+(side===0?8:-8),sh[1]+4];line(root,p[side],'#a8f0ff',2);line(p[side],p[side+1],'#a8f0ff',2)}
+  for(const side of [4,6]){const root=[hip[0]+(side===4?9:-9),hip[1]];line(root,p[side],'#fbcda3',2);line(p[side],p[side+1],'#fbcda3',2)}
+  ctx.setLineDash([]);for(const point of [sh,hip,...p]){ctx.fillStyle='#ffffff';ctx.beginPath();ctx.arc(point[0],point[1],3,0,Math.PI*2);ctx.fill()}ctx.restore();
+ }
+}else{
+ line(sh,hip,'#dce6f5',27);
+ for(let side of [2,0]){let shoulder=[sh[0]+(side===0?8:-8)+(side===0?shoulderShift:-shoulderShift),sh[1]+4];line(shoulder,p[side],colors[side],15);line(p[side],p[side+1],colors[side],12)}
+ for(let side of [6,4]){let root=[hip[0]+(side===4?9:-9),hip[1]];line(root,p[side],colors[side],19);line(p[side],p[side+1],colors[side],15)}
+ ctx.fillStyle='#e7c5a2';ctx.beginPath();ctx.arc(sh[0],sh[1]-35,24,0,7);ctx.fill();ctx.fillStyle='#303847';ctx.fillRect(sh[0]-22,sh[1]-63,42,12);
+}
+if(!playing){for(const [j,q] of [sh,hip].entries()){ctx.fillStyle=j===0?'#bc93ff':'#7ce1a0';ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.beginPath();ctx.arc(q[0],q[1],13,0,Math.PI*2);ctx.fill();ctx.stroke()}}
+if(!playing)p.forEach(([x,y],j)=>{ctx.fillStyle=colors[j];ctx.strokeStyle='white';ctx.lineWidth=2;ctx.beginPath();ctx.arc(x,y,10,0,7);ctx.fill();ctx.stroke()});
+if(document.querySelector('#onionEnabled').checked){
+ const alpha=Number(document.querySelector('#onionOpacity').value)/100;
+ const ghost=(idx,color)=>{const pp=frames[idx],tt=torsos[idx],sd=[tt[0][0],tt[0][1]-108],hd=[tt[1][0],tt[1][1]-226];
+ const q=pp.map((v,j)=>[v[0]+(j<4?sd[0]:hd[0]),v[1]+(j<4?sd[1]:hd[1])]);
+ ctx.save();ctx.globalAlpha=alpha;ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=3;ctx.setLineDash([5,4]);
+ const seg=(a,b)=>{ctx.beginPath();ctx.moveTo(a[0],a[1]);ctx.lineTo(b[0],b[1]);ctx.stroke()};
+ seg(tt[0],tt[1]);for(const side of [0,2]){seg(tt[0],q[side]);seg(q[side],q[side+1])}
+ for(const side of [4,6]){seg(tt[1],q[side]);seg(q[side],q[side+1])}
+ for(const p of q){ctx.beginPath();ctx.arc(p[0],p[1],3,0,Math.PI*2);ctx.fill()}ctx.restore()};
+ const current=Math.floor(phase)%4;ghost((current+3)%4,'#6be4ff');ghost((current+1)%4,'#ffc46b');
+}
+ctx.restore();[...keyBox.children].forEach((b,i)=>b.classList.toggle('on',i===selected&&!playing))}
+function coords(e){let r=c.getBoundingClientRect(),s=Math.min(r.width/320,r.height/410);return [(e.clientX-r.left-r.width/2)/s*(document.querySelector('#mirrorEnabled').checked?-1:1),(e.clientY-r.top-36)/s]}
+c.addEventListener('pointerdown',e=>{if(editMode==='art')return;if(playing)return;const p=coords(e);let best=24;drag=-1;[...frames[selected],...torsos[selected]].forEach((q,i)=>{let d=Math.hypot(q[0]-p[0],q[1]-p[1]);if(d<best){best=d;drag=i}});if(drag>=0)c.setPointerCapture(e.pointerId)});
+c.addEventListener('pointermove',e=>{if(editMode==='art'||drag<0)return;let p=coords(e);if(drag<8){frames[selected][drag]=[Math.max(-145,Math.min(145,p[0])),Math.max(95,Math.min(360,p[1]))]}else{let j=drag-8;torsos[selected][j]=[Math.max(-65,Math.min(65,p[0])),Math.max(j===0?90:185,Math.min(j===0?165:270,p[1]))]}render()});
+for(let evt of ['pointerup','pointercancel'])c.addEventListener(evt,()=>drag=-1);
+document.querySelector('#preset').onclick=()=>{playing=false;frames=clone(originalActions[actionState].frames);torsos=clone(originalActions[actionState].torsos);selected=0;phase=0;msg.textContent='已載入 A4-19 原始 A3-3 自訂四影格動作';render()};
+document.querySelector('#play').onclick=()=>{playing=!playing;phase=selected;last=0;render()};
+document.querySelector('#torsoPreset').onclick=()=>{torsos=leanTorso();msg.textContent='已套用四影格輕微前傾；腿部與手臂原始座標不變';render()};
+document.querySelector('#torsoNeutral').onclick=()=>{torsos=neutralTorso();msg.textContent='已恢復四影格直立軀幹';render()};
+document.querySelector('#torsoReset').onclick=()=>{torsos[selected]=[[0,108],[0,226]];msg.textContent='當前影格軀幹已重設';render()};
+document.querySelector('#reset').onclick=()=>{frames[selected]=clone(originalActions[actionState].frames[selected]);render()};
+document.querySelector('#bobEnabled').onchange=()=>{msg.textContent=document.querySelector('#bobEnabled').checked?'已開啟上下晃動，可調整幅度':'已關閉上下晃動，恢復原始跑步效果';render()};
+document.querySelector('#bobAmount').oninput=()=>{document.querySelector('#bobLabel').textContent=document.querySelector('#bobAmount').value;render()};
+document.querySelector('#groundEnabled').onchange=render;
+document.querySelector('#artEnabled').onchange=render;
+document.querySelector('#armEnabled').onchange=render;
+document.querySelector('#lockEnabled').onchange=()=>{msg.textContent=document.querySelector('#lockEnabled').checked?'腳掌落地鎖定已開啟':'腳掌落地鎖定已關閉，可比較原始動作';render()};
+const setTempo=(v)=>{speed.value=String(v);document.querySelector('#speedLabel').textContent=Number(v).toFixed(1);msg.textContent='目前播放 '+Number(v).toFixed(1)+' 倍速；骨架四影格座標完全不變';};
+document.querySelector('#tempoSlow').onclick=()=>setTempo(.6);
+document.querySelector('#tempoNormal').onclick=()=>setTempo(1);
+document.querySelector('#tempoFast').onclick=()=>setTempo(.45);
+speed.oninput=()=>setTempo(speed.value);
+setTempo(1.5);
+document.querySelector('#travelSpeed').oninput=()=>document.querySelector('#travelLabel').textContent=document.querySelector('#travelSpeed').value;
+document.querySelector('#moveToggle').onclick=()=>{moving=!moving;document.querySelector('#moveToggle').textContent=moving?'停止水平移動':'開始水平移動';};
+document.querySelector('#moveReset').onclick=()=>{travel=0;render()};
+document.querySelector('#rigMode').onclick=()=>{editMode='rig';msg.textContent='骨架模式：暫停後可拖曳關節';document.querySelector('#rigMode').classList.add('primary');document.querySelector('#artMode').classList.remove('primary')};
+document.querySelector('#artMode').onclick=()=>{editMode='art';msg.textContent='美術模式：使用滑桿調整部件，不改骨架';document.querySelector('#artMode').classList.add('primary');document.querySelector('#rigMode').classList.remove('primary')};
+document.querySelector('#partChoice').onchange=syncPart;
+for(const [id,key,out,convert] of [['dxRange','dx','dxVal',Number],['dyRange','dy','dyVal',Number],['scRange','scale','scVal',v=>Number(v)/100],['rotRange','rot','rotVal',Number]])document.querySelector('#'+id).oninput=e=>{partSettings[document.querySelector('#partChoice').value][key]=convert(e.target.value);document.querySelector('#'+out).textContent=e.target.value;render()};
+document.querySelector('#resetPart').onclick=()=>{partSettings[document.querySelector('#partChoice').value]=emptyPart();syncPart();render()};
+document.querySelector('#resetParts').onclick=()=>{partSettings=Object.fromEntries(partKeys.map(k=>[k,emptyPart()]));syncPart();render()};
+syncPart();
+document.querySelector('#approvedRestore').onclick=()=>{if(confirm('將目前三種動作及美術偏移恢復為 A4-15 正式備份？未另行匯出的修改將遺失。')){restoreApproved();msg.textContent='已恢復 A4-15 正式備份'}};
+document.querySelector('#save').onclick=()=>{try{localStorage.setItem(store,JSON.stringify(completeExport()));msg.textContent='A4-19 已儲存到目前瀏覽器'}catch(e){msg.textContent='儲存失敗，請使用 JSON 匯出備份'}};
+document.querySelector('#export').onclick=()=>{document.querySelector('#data').value=JSON.stringify(completeExport());msg.textContent='已產生 JSON，可全選複製保存'};
+document.querySelector('#import').onclick=()=>{try{let x=JSON.parse(document.querySelector('#data').value),f=x.frames;if(!Array.isArray(f)||f.length!==4||f.some(a=>!Array.isArray(a)||a.length!==8||a.some(p=>!Array.isArray(p)||p.length!==2||p.some(n=>!Number.isFinite(n)))))throw Error();frames=clone(f);if(x.torsos&&Array.isArray(x.torsos)&&x.torsos.length===4&&x.torsos.every(t=>Array.isArray(t)&&t.length===2&&t.every(p=>Array.isArray(p)&&p.length===2&&p.every(Number.isFinite))))torsos=clone(x.torsos);else torsos=Array.from({length:4},()=>[[0,108],[0,226]]);if(x.partSettings)for(const k of partKeys){const s=x.partSettings[k];if(s&&['dx','dy','scale','rot'].every(n=>Number.isFinite(s[n])))partSettings[k]=s}if(x.actionBank)Object.assign(actionBank,x.actionBank);if(x.runBackup)actionBank.run=clone(x.runBackup);if(['idle','walk','run'].includes(x.actionState))actionState=x.actionState;snapshotActive();setStateButtons();syncPart();playing=false;selected=0;phase=0;msg.textContent='已匯入動作與美術設定';render()}catch(e){msg.textContent='JSON 格式不正確'}};
+try{let f=JSON.parse(localStorage.getItem(store));if(f&&Array.isArray(f.frames)&&f.frames.length===4){frames=f.frames;if(Array.isArray(f.torsos)&&f.torsos.length===4)torsos=f.torsos;if(f.partSettings)for(const k of partKeys){const s=f.partSettings[k];if(s&&['dx','dy','scale','rot'].every(n=>Number.isFinite(s[n])))partSettings[k]=s}syncPart();if(f.actionBank)Object.assign(actionBank,f.actionBank);if(f.runBackup)actionBank.run=clone(f.runBackup);if(['idle','walk','run'].includes(f.actionState))actionState=f.actionState;snapshotActive();setStateButtons()}else if(Array.isArray(f)&&f.length===4&&f.every(a=>Array.isArray(a)&&a.length===8))frames=f}catch(e){}
+const timeline=document.querySelector('#timeline'),timelineLabel=document.querySelector('#timelineLabel');
+function seekFrame(v){playing=false;phase=((Number(v)%4)+4)%4;selected=Math.floor(phase);last=0;timeline.value=String(phase);timelineLabel.textContent=(phase+1).toFixed(2);render()}
+timeline.oninput=e=>seekFrame(e.target.value);
+document.querySelector('#prevFrame').onclick=()=>seekFrame((Math.floor(phase)+3)%4);
+document.querySelector('#nextFrame').onclick=()=>seekFrame((Math.floor(phase)+1)%4);
+document.querySelector('#playFromHere').onclick=()=>{playing=true;last=0;msg.textContent='從目前時間軸位置繼續播放'};
+document.querySelector('#compareRig').onchange=render;
+function updateSeam(){const el=document.querySelector('#seamInfo');if(!document.querySelector('#seamEnabled').checked){el.textContent='開啟接縫檢查以比較最後與第一影格的關節差異。';return}const a=frames[3],b=frames[0],d=a.map((p,i)=>Math.hypot(p[0]-b[i][0],p[1]-b[i][1]));el.textContent='第4→第1格：平均關節位移 '+(d.reduce((x,y)=>x+y,0)/d.length).toFixed(1)+' px，最大 '+Math.max(...d).toFixed(1)+' px（姿勢差異不等於必然跳格）。'}
+for(const id of ['onionEnabled','mirrorEnabled','seamEnabled','onionOpacity'])document.querySelector('#'+id).oninput=()=>{document.querySelector('#onionOpacityLabel').textContent=document.querySelector('#onionOpacity').value;updateSeam();render()};
+for(const [id,out] of [['breathAmount','breathLabel'],['clothAmount','clothLabel']])document.querySelector('#'+id).oninput=e=>{document.querySelector('#'+out).textContent=e.target.value;render()};
+function tick(ts){if(playing){if(last){const dt=Math.min(.05,(ts-last)/1000);previewClock+=dt;if(transition){transition.elapsed+=dt;if(transition.elapsed>=transition.duration)transition=null}phase=(phase+dt*Number(speed.value)*2)%4;if(moving&&actionState!=='idle')travel+=dt*Number(document.querySelector('#travelSpeed').value)*(actionState==='walk'?.5:1);}selected=Math.floor(phase);if(document.querySelector('#seamEnabled').checked)updateSeam();timeline.value=String(phase);timelineLabel.textContent=(phase+1).toFixed(2);render()}last=ts;requestAnimationFrame(tick)}render();requestAnimationFrame(tick);
+</script></html>

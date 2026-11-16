@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><title>俠影江湖：群俠亂鬥 v0.09-C-Art-Test｜A4-55 國漫像素選單</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171b20;touch-action:none;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",sans-serif}#wrap{position:fixed;inset:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:flex;align-items:center;justify-content:center}canvas{display:block;background:#9ab878;touch-action:none}#rotate{display:none;position:fixed;inset:0;background:#111;color:#fff;z-index:9;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:20px}#creator{position:fixed;inset:0;z-index:8;background:#111d;display:flex;align-items:center;justify-content:center;color:#fff}#card{width:min(560px,86vw);background:#1e2935;border:2px solid #ffffffaa;border-radius:14px;padding:22px;box-sizing:border-box;text-align:center}#card h1{font-size:28px;margin:0 0 18px}#nameInput{width:82%;font-size:20px;padding:10px;border-radius:8px;border:0;text-align:center}.classes{display:flex;gap:10px;justify-content:center;margin:18px 0}.classBtn{font-size:18px;padding:12px 20px;border-radius:9px;border:2px solid #ffffff55;background:#2b3540;color:#fff}.classBtn.sel{border-color:#fff4b0;background:#355f82}#startBtn{font-size:20px;font-weight:bold;padding:12px 38px;border:0;border-radius:9px;background:#c8a45b;color:#171b20}#hint{font-size:14px;color:#ccc;margin:12px 0 0}@media(orientation:portrait){#rotate{display:flex}}</style></head><body><div id="wrap"><canvas id="game"></canvas></div><div id="creator"><div id="card"><h1>建立你的江湖角色</h1><input id="nameInput" maxlength="8" placeholder="輸入角色名稱"><div class="classes"><button class="classBtn sel" data-job="劍俠">劍俠</button><button class="classBtn" data-job="遊俠">遊俠</button><button class="classBtn" data-job="武者">武者</button></div><button id="startBtn">踏入江湖</button><div id="hint">劍俠：劍　｜　遊俠：弓　｜　武者：長槍</div></div></div><div id="rotate">請將 iPhone 轉成橫向遊玩</div><script>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><title>俠影江湖：群俠亂鬥 v0.09-C-Art-Test｜A4-56 摺疊式功能選單</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171b20;touch-action:none;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",sans-serif}#wrap{position:fixed;inset:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:flex;align-items:center;justify-content:center}canvas{display:block;background:#9ab878;touch-action:none}#rotate{display:none;position:fixed;inset:0;background:#111;color:#fff;z-index:9;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:20px}#creator{position:fixed;inset:0;z-index:8;background:#111d;display:flex;align-items:center;justify-content:center;color:#fff}#card{width:min(560px,86vw);background:#1e2935;border:2px solid #ffffffaa;border-radius:14px;padding:22px;box-sizing:border-box;text-align:center}#card h1{font-size:28px;margin:0 0 18px}#nameInput{width:82%;font-size:20px;padding:10px;border-radius:8px;border:0;text-align:center}.classes{display:flex;gap:10px;justify-content:center;margin:18px 0}.classBtn{font-size:18px;padding:12px 20px;border-radius:9px;border:2px solid #ffffff55;background:#2b3540;color:#fff}.classBtn.sel{border-color:#fff4b0;background:#355f82}#startBtn{font-size:20px;font-weight:bold;padding:12px 38px;border:0;border-radius:9px;background:#c8a45b;color:#171b20}#hint{font-size:14px;color:#ccc;margin:12px 0 0}@media(orientation:portrait){#rotate{display:flex}}</style></head><body><div id="wrap"><canvas id="game"></canvas></div><div id="creator"><div id="card"><h1>建立你的江湖角色</h1><input id="nameInput" maxlength="8" placeholder="輸入角色名稱"><div class="classes"><button class="classBtn sel" data-job="劍俠">劍俠</button><button class="classBtn" data-job="遊俠">遊俠</button><button class="classBtn" data-job="武者">武者</button></div><button id="startBtn">踏入江湖</button><div id="hint">劍俠：劍　｜　遊俠：弓　｜　武者：長槍</div></div></div><div id="rotate">請將 iPhone 轉成橫向遊玩</div><script>
 const c=document.getElementById('game'),ctx=c.getContext('2d'),W=1280,H=720;
 const wrap=document.getElementById('wrap');
 let spriteAspect=1;
@@ -173,15 +173,26 @@ function startStage(next){stage=next;playerHurtT=0;wolfDash=null;classDodgeMove=
 function retry(){startStage(stage)}
 function enterMap2(){playerHurtT=0;wolfDash=null;classDodgeMove=null;mapId=2;win=false;gameOver=false;loot=null;bossSpawned=false;bossDefeated=false;fx=[];projectiles=[];rapidBurst=null;enemies=[];p.x=260;p.y=410;p.face=1;p.attT=p.dodgeT=0;resetJoy();fx.push({x:W/2,y:170,t:1.4,max:1.4,map:true,name:'黑風山寨外圍'})}
 const combatMenuIcons=[
-  {id:'martial',x:1020},
-  {id:'status',x:1115},
-  {id:'bag',x:1210}
+  {id:'martial',x:928,label:'武學'},
+  {id:'status',x:1022,label:'狀態'},
+  {id:'bag',x:1116,label:'背包'}
 ];
+let combatMenuExpanded=false;
+const combatMenuToggleX=1210;
 const combatMenuY=57;
 const combatMenuTapWidth=90;
 const combatMenuTapHeight=84;
 function toggleCombatMenu(point){
   if(gameOver||Math.abs(point.y-combatMenuY)>combatMenuTapHeight/2)return false;
+  if(Math.abs(point.x-combatMenuToggleX)<=combatMenuTapWidth/2){
+    combatMenuExpanded=!combatMenuExpanded;
+    if(!combatMenuExpanded){
+      martialOpen=statsOpen=bagOpen=false;
+      resetJoy();
+    }
+    return true;
+  }
+  if(!combatMenuExpanded)return false;
   const menu=combatMenuIcons.find(({x})=>Math.abs(point.x-x)<=combatMenuTapWidth/2);
   if(!menu)return false;
   martialOpen=menu.id==='martial'&&!martialOpen;
@@ -1074,7 +1085,9 @@ function paintCombatMenuArt(id){
     block('#dcb777',4,9,3,1);block('#dcb777',4,13,3,1);block('#dcb777',4,17,3,1);
     block('#f4d9a1',12,6,4,8);block('#bd925d',13,7,2,1);
     block('#8b6548',13,10,2,1);block('#8b6548',13,12,2,1);
-    block('#9d4335',15,16,2,4);
+    block('#9d4335',15,16,2,4);block('#e58359',15,16,1,2);
+    block('#89b9ae',8,6,3,1);block('#7fa5a1',16,13,2,1);
+    block('#f9e7b9',7,18,7,1);
   }else if(id==='status'){
     shape(ink,[[1,21],[3,17],[7,14],[6,11],[6,6],[3,5],[3,2],[6,1],[9,3],
       [12,2],[16,3],[19,6],[19,9],[22,12],[19,14],[18,17],[16,17],[20,20],[22,23],[1,23]]);
@@ -1087,7 +1100,8 @@ function paintCombatMenuArt(id){
     shape('#367675',[[3,21],[8,16],[12,18],[15,18],[19,21],[20,22],[3,22]]);
     shape('#73a9a0',[[4,20],[8,17],[11,19],[10,22],[5,22]]);
     shape('#ead7a7',[[10,17],[13,19],[17,20],[15,22],[11,19]]);
-    block('#a44c3a',6,6,3,1);
+    block('#a44c3a',6,6,3,1);block('#df885e',6,6,1,1);
+    block('#ffd4a3',13,12,2,1);block('#8dc2ac',6,20,2,1);
   }else{
     shape(ink,[[3,9],[6,6],[9,6],[6,2],[10,1],[13,3],[17,1],[19,3],[16,7],
       [21,10],[23,14],[22,19],[19,22],[5,22],[2,19],[1,15]]);
@@ -1098,21 +1112,50 @@ function paintCombatMenuArt(id){
     shape('#784736',[[16,9],[17,10],[20,14],[19,17],[18,14]]);
     block('#e9ca89',8,7,9,2);block('#a34937',12,8,4,2);
     shape('#b44d3a',[[13,9],[15,9],[17,13],[16,16],[14,13]]);
-    block('#f1be7e',6,16,2,1);
+    block('#f1be7e',6,16,2,1);block('#f6cc89',7,10,3,1);
+    block('#d9935d',9,17,4,1);block('#da7350',15,11,1,2);
   }
   return surface;
 }
 const combatMenuArt=Object.fromEntries(combatMenuIcons.map(({id})=>[id,paintCombatMenuArt(id)]));
 
-function drawCombatMenuIcon({id,x},y){
+function drawCombatMenuIcon({id,x,label},y){
   const selected=id==='martial'?martialOpen:id==='status'?statsOpen:bagOpen;
-  hudPanel(x-31,y-28,62,56,selected);
+  hudPanel(x-35,y-35,70,70,selected);
   ctx.save();
   ctx.translate(x,y);
   ctx.imageSmoothingEnabled=false;
-  ctx.drawImage(combatMenuArt[id],-21,-21,42,42);
+  ctx.drawImage(combatMenuArt[id],-22,-31,44,44);
+  ctx.font='bold 15px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillStyle='#f4ddb0';ctx.fillText(label,0,23);
   if((id==='martial'&&martialPoints>0)||(id==='status'&&statPoints>0)){
-    ctx.fillStyle='#ffca78';ctx.beginPath();ctx.arc(23,-20,4,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#ffca78';ctx.beginPath();ctx.arc(26,-25,4,0,Math.PI*2);ctx.fill();
+  }
+  ctx.restore();
+}
+function drawCombatMenu(){
+  if(win||gameOver)return;
+  const x=combatMenuToggleX,y=combatMenuY;
+  ctx.save();
+  if(combatMenuExpanded){
+    hudPanel(881,y-42,285,84);
+    for(const menu of combatMenuIcons)drawCombatMenuIcon(menu,y);
+  }
+  hudPanel(x-31,y-28,62,56,combatMenuExpanded);
+  ctx.translate(x,y);
+  ctx.strokeStyle='#f8dfad';ctx.lineWidth=2.5;ctx.lineCap='round';
+  if(combatMenuExpanded){
+    ctx.beginPath();ctx.moveTo(-8,-8);ctx.lineTo(8,8);
+    ctx.moveTo(8,-8);ctx.lineTo(-8,8);ctx.stroke();
+  }else{
+    for(const [dx,dy] of [[-7,-7],[7,-7],[-7,7],[7,7]]){
+      ctx.beginPath();ctx.moveTo(dx,dy-5);ctx.lineTo(dx+5,dy);
+      ctx.lineTo(dx,dy+5);ctx.lineTo(dx-5,dy);ctx.closePath();
+      ctx.fillStyle=dy<0?'#e3c58a':'#99b7a0';ctx.fill();
+    }
+    if(martialPoints>0||statPoints>0){
+      ctx.fillStyle='#ffca78';ctx.beginPath();ctx.arc(23,-20,4,0,Math.PI*2);ctx.fill();
+    }
   }
   ctx.restore();
 }
@@ -1137,7 +1180,6 @@ function drawCombatHUD(){
   ctx.fillStyle='#d7dfcf';ctx.font='16px sans-serif';
   ctx.fillText('敵人 '+enemies.filter(e=>e.hp>0).length+'　·　戰利值 '+score,403,77,376);
   const type=weaponType();
-  for(const menu of combatMenuIcons)drawCombatMenuIcon(menu,combatMenuY);
   ctx.restore();
   if(win||gameOver||bagOpen||statsOpen||martialOpen)return;
   ctx.save();ctx.textAlign='center';ctx.textBaseline='middle';
@@ -1173,5 +1215,5 @@ drawCombatHUD();if(win){ctx.fillStyle='#000b';ctx.fillRect(0,0,W,H);ctx.fillStyl
   ctx.fillStyle='#fff4b0';ctx.font='bold 14px sans-serif';ctx.textAlign='center';
   ctx.fillText('測試：熟練度',870,y+24,85);ctx.fillText('+100',870,y+43);
   ctx.textAlign='left';
-}else ctx.fillText(r[2],400,y+49);if(martialTab==='light'?i<2:i<2&&(martialTab==='sword'||i===1)){ctx.fillStyle=r[5]?'#355f82':'#444';ctx.fillRect(650,y+5,70,30);ctx.fillStyle=r[5]?'#fff4b0':'#999';ctx.textAlign='center';ctx.font='bold 16px sans-serif';ctx.fillText(martialTab==='light'?(equippedLight===r[4]?'卸下':'裝備'):(martialTab==='spear'?equippedSpear:martialTab==='bow'?equippedBow:equippedSword)===r[4]?'已裝備':'裝備',685,y+26);const actionReady=growth?canBreakthrough(key):r[3];ctx.fillStyle=actionReady?'#c8a45b':'#555';ctx.fillRect(730,y+5,75,30);ctx.fillStyle=actionReady?'#171b20':'#999';ctx.fillText(growth?'突破':'學習',767,y+26);ctx.textAlign='left'}});const testButtons=[[390,425,'測試：武學點 +3']];for(const [x,width,label] of testButtons){ctx.fillStyle='#7d5d31';ctx.fillRect(x,515,width,50);ctx.strokeStyle='#fff4b0';ctx.strokeRect(x,515,width,50);ctx.fillStyle='#fff4b0';ctx.font='bold 18px sans-serif';ctx.textAlign='center';ctx.fillText(label,x+width/2,547,width-12)}ctx.fillStyle='#ccc';ctx.font='14px sans-serif';ctx.fillText('※ 開發測試用途，正式版可移除',W/2,585);ctx.fillText('再點右上角「武學」關閉',W/2,605)}if(gameOver){ctx.fillStyle='#000c';ctx.fillRect(0,0,W,H);ctx.textAlign='center';ctx.fillStyle='white';ctx.font='bold 58px sans-serif';ctx.fillText('戰鬥失敗',W/2,270);ctx.font='26px sans-serif';ctx.fillText(playerName+'力竭倒下',W/2,325);ctx.fillStyle='#29465f';ctx.fillRect(480,500,320,110);ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.strokeRect(480,500,320,110);ctx.fillStyle='white';ctx.font='bold 32px sans-serif';ctx.fillText('重新挑戰',W/2,568)}}
+}else ctx.fillText(r[2],400,y+49);if(martialTab==='light'?i<2:i<2&&(martialTab==='sword'||i===1)){ctx.fillStyle=r[5]?'#355f82':'#444';ctx.fillRect(650,y+5,70,30);ctx.fillStyle=r[5]?'#fff4b0':'#999';ctx.textAlign='center';ctx.font='bold 16px sans-serif';ctx.fillText(martialTab==='light'?(equippedLight===r[4]?'卸下':'裝備'):(martialTab==='spear'?equippedSpear:martialTab==='bow'?equippedBow:equippedSword)===r[4]?'已裝備':'裝備',685,y+26);const actionReady=growth?canBreakthrough(key):r[3];ctx.fillStyle=actionReady?'#c8a45b':'#555';ctx.fillRect(730,y+5,75,30);ctx.fillStyle=actionReady?'#171b20':'#999';ctx.fillText(growth?'突破':'學習',767,y+26);ctx.textAlign='left'}});const testButtons=[[390,425,'測試：武學點 +3']];for(const [x,width,label] of testButtons){ctx.fillStyle='#7d5d31';ctx.fillRect(x,515,width,50);ctx.strokeStyle='#fff4b0';ctx.strokeRect(x,515,width,50);ctx.fillStyle='#fff4b0';ctx.font='bold 18px sans-serif';ctx.textAlign='center';ctx.fillText(label,x+width/2,547,width-12)}ctx.fillStyle='#ccc';ctx.font='14px sans-serif';ctx.fillText('※ 開發測試用途，正式版可移除',W/2,585);ctx.fillText('再點右上角「武學」關閉',W/2,605)}if(gameOver){ctx.fillStyle='#000c';ctx.fillRect(0,0,W,H);ctx.textAlign='center';ctx.fillStyle='white';ctx.font='bold 58px sans-serif';ctx.fillText('戰鬥失敗',W/2,270);ctx.font='26px sans-serif';ctx.fillText(playerName+'力竭倒下',W/2,325);ctx.fillStyle='#29465f';ctx.fillRect(480,500,320,110);ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.strokeRect(480,500,320,110);ctx.fillStyle='white';ctx.font='bold 32px sans-serif';ctx.fillText('重新挑戰',W/2,568)}drawCombatMenu();}
 </script></body></html>

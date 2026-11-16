@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><title>俠影江湖：群俠亂鬥 v0.09-C-Art-Test｜A4-45 竹林山道與寨門燈火</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171b20;touch-action:none;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",sans-serif}#wrap{position:fixed;inset:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:flex;align-items:center;justify-content:center}canvas{display:block;background:#9ab878;touch-action:none}#rotate{display:none;position:fixed;inset:0;background:#111;color:#fff;z-index:9;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:20px}#creator{position:fixed;inset:0;z-index:8;background:#111d;display:flex;align-items:center;justify-content:center;color:#fff}#card{width:min(560px,86vw);background:#1e2935;border:2px solid #ffffffaa;border-radius:14px;padding:22px;box-sizing:border-box;text-align:center}#card h1{font-size:28px;margin:0 0 18px}#nameInput{width:82%;font-size:20px;padding:10px;border-radius:8px;border:0;text-align:center}.classes{display:flex;gap:10px;justify-content:center;margin:18px 0}.classBtn{font-size:18px;padding:12px 20px;border-radius:9px;border:2px solid #ffffff55;background:#2b3540;color:#fff}.classBtn.sel{border-color:#fff4b0;background:#355f82}#startBtn{font-size:20px;font-weight:bold;padding:12px 38px;border:0;border-radius:9px;background:#c8a45b;color:#171b20}#hint{font-size:14px;color:#ccc;margin:12px 0 0}@media(orientation:portrait){#rotate{display:flex}}</style></head><body><div id="wrap"><canvas id="game"></canvas></div><div id="creator"><div id="card"><h1>建立你的江湖角色</h1><input id="nameInput" maxlength="8" placeholder="輸入角色名稱"><div class="classes"><button class="classBtn sel" data-job="劍俠">劍俠</button><button class="classBtn" data-job="遊俠">遊俠</button><button class="classBtn" data-job="武者">武者</button></div><button id="startBtn">踏入江湖</button><div id="hint">劍俠：劍　｜　遊俠：弓　｜　武者：長槍</div></div></div><div id="rotate">請將 iPhone 轉成橫向遊玩</div><script>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><title>俠影江湖：群俠亂鬥 v0.09-C-Art-Test｜A4-46 山道路肩與近景</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171b20;touch-action:none;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",sans-serif}#wrap{position:fixed;inset:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:flex;align-items:center;justify-content:center}canvas{display:block;background:#9ab878;touch-action:none}#rotate{display:none;position:fixed;inset:0;background:#111;color:#fff;z-index:9;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:20px}#creator{position:fixed;inset:0;z-index:8;background:#111d;display:flex;align-items:center;justify-content:center;color:#fff}#card{width:min(560px,86vw);background:#1e2935;border:2px solid #ffffffaa;border-radius:14px;padding:22px;box-sizing:border-box;text-align:center}#card h1{font-size:28px;margin:0 0 18px}#nameInput{width:82%;font-size:20px;padding:10px;border-radius:8px;border:0;text-align:center}.classes{display:flex;gap:10px;justify-content:center;margin:18px 0}.classBtn{font-size:18px;padding:12px 20px;border-radius:9px;border:2px solid #ffffff55;background:#2b3540;color:#fff}.classBtn.sel{border-color:#fff4b0;background:#355f82}#startBtn{font-size:20px;font-weight:bold;padding:12px 38px;border:0;border-radius:9px;background:#c8a45b;color:#171b20}#hint{font-size:14px;color:#ccc;margin:12px 0 0}@media(orientation:portrait){#rotate{display:flex}}</style></head><body><div id="wrap"><canvas id="game"></canvas></div><div id="creator"><div id="card"><h1>建立你的江湖角色</h1><input id="nameInput" maxlength="8" placeholder="輸入角色名稱"><div class="classes"><button class="classBtn sel" data-job="劍俠">劍俠</button><button class="classBtn" data-job="遊俠">遊俠</button><button class="classBtn" data-job="武者">武者</button></div><button id="startBtn">踏入江湖</button><div id="hint">劍俠：劍　｜　遊俠：弓　｜　武者：長槍</div></div></div><div id="rotate">請將 iPhone 轉成橫向遊玩</div><script>
 const c=document.getElementById('game'),ctx=c.getContext('2d'),W=1280,H=720;
 const wrap=document.getElementById('wrap');
 let spriteAspect=1;
@@ -348,12 +348,23 @@ function paintBambooScenery(section){
   }
   if(section===3){
     // A narrow fall behind the ridge breaks up the bamboo without crossing the path.
-    const water=g.createLinearGradient(1000,170,1080,339);
+    g.fillStyle='#63887c';
+    g.beginPath();g.moveTo(962,321);
+    g.quadraticCurveTo(984,268,1004,230);g.lineTo(1018,203);
+    g.quadraticCurveTo(1045,189,1075,205);
+    g.quadraticCurveTo(1108,245,1134,324);g.closePath();g.fill();
+    g.fillStyle='#81a696';
+    g.beginPath();g.moveTo(996,256);g.lineTo(1018,203);
+    g.quadraticCurveTo(1045,189,1075,205);
+    g.lineTo(1090,229);g.quadraticCurveTo(1045,213,996,256);g.fill();
+    const water=g.createLinearGradient(1000,197,1080,330);
     water.addColorStop(0,'#d6e8d9');water.addColorStop(.64,'#8cc4bd');
-    water.addColorStop(1,'#abd0b800');
-    g.fillStyle=water;g.beginPath();g.moveTo(1038,197);
+    water.addColorStop(1,'#7aaa9a');
+    g.fillStyle=water;g.beginPath();g.moveTo(1038,201);
     g.quadraticCurveTo(1027,271,993,330);g.lineTo(1067,331);
     g.quadraticCurveTo(1066,270,1070,205);g.closePath();g.fill();
+    g.fillStyle='#83aba0';g.beginPath();
+    g.ellipse(1030,330,45,5,0,0,Math.PI*2);g.fill();
     g.strokeStyle='#eff2d875';g.lineWidth=2;
     for(let i=0;i<4;i++){
       g.beginPath();g.moveTo(1042+i*7,218+i*5);
@@ -405,11 +416,16 @@ function paintBambooScenery(section){
       const glow=g.createRadialGradient(x,y,4,x,y,52);
       glow.addColorStop(0,'#ffcc6db3');glow.addColorStop(1,'#ffb45000');
       g.fillStyle=glow;g.fillRect(x-52,y-52,104,104);
+      const beam=boss?195:274;
       g.strokeStyle='#674632';g.lineWidth=2;
-      g.beginPath();g.moveTo(x,y-32);g.lineTo(x,y-10);g.stroke();
-      g.fillStyle='#743f32';g.fillRect(x-10,y-11,20,24);
-      g.fillStyle='#ed9e48';g.fillRect(x-8,y-8,16,18);
-      g.fillStyle='#ffe0a0';g.fillRect(x-3,y-7,6,15);
+      g.beginPath();g.moveTo(x,beam);g.lineTo(x,y-11);
+      g.moveTo(x,y+11);g.lineTo(x,y+19);g.stroke();
+      g.fillStyle='#8f4936';g.beginPath();
+      g.ellipse(x,y,10,12,0,0,Math.PI*2);g.fill();
+      g.fillStyle='#ed9e48';g.beginPath();
+      g.ellipse(x,y,8,10,0,0,Math.PI*2);g.fill();
+      g.fillStyle='#ffe0a0';g.beginPath();
+      g.ellipse(x-1,y-1,3.4,8,.05,0,Math.PI*2);g.fill();
     }
   }
   const road=g.createLinearGradient(0,340,0,610);
@@ -488,6 +504,49 @@ function paintBambooScenery(section){
     g.beginPath();g.moveTo(x-w,y);
     g.quadraticCurveTo(x-w*.55,y-h,x,y-h*.56);
     g.quadraticCurveTo(x+w*.55,y-h,x+w,y);g.closePath();g.fill();
+  }
+  // Large plants are rooted in the near bank below the road and touch controls.
+  const banks=[[24,420,751,1263],[22,391,807,1260],[34,441,782,1267],
+    [24,522,849,1266],[21,466,806,1265]][section-1];
+  for(const [index,x] of banks.entries()){
+    const corner=index===0||index===banks.length-1;
+    const y=corner?H+2:Math.max(roadFront(x)+98,H-17);
+    g.fillStyle='#244f3c52';g.beginPath();
+    g.ellipse(x,y-2,corner?67:49,10,0,0,Math.PI*2);g.fill();
+
+    // A stone catches light on top and is half sunk into the bank.
+    const size=corner?1.2:1;
+    g.save();g.translate(x,y-9);g.scale(size,size);
+    g.beginPath();g.moveTo(-43,0);
+    g.bezierCurveTo(-40,-12,-32,-17,-24,-29);
+    g.quadraticCurveTo(-9,-42,10,-33);
+    g.quadraticCurveTo(37,-31,46,-8);
+    g.quadraticCurveTo(37,7,4,7);g.quadraticCurveTo(-23,8,-43,0);
+    g.fillStyle='#657d67';g.fill();g.strokeStyle='#3d6150';g.lineWidth=2;g.stroke();
+    g.beginPath();g.moveTo(-36,-11);g.quadraticCurveTo(-20,-37,-5,-35);
+    g.quadraticCurveTo(15,-36,33,-22);g.quadraticCurveTo(5,-26,-10,-15);
+    g.quadraticCurveTo(-25,-11,-36,-11);g.fillStyle='#91a078';g.fill();
+    g.restore();
+
+    const spread=corner?78:47;
+    for(let i=0;i<5;i++){
+      const dx=(i-2)*spread/2;
+      const h=(corner?52:28)+rand()*(corner?42:18);
+      const root=x+(i-2)*3,tip=y-h;
+      g.strokeStyle='#a3ab69';g.lineWidth=1.2;g.beginPath();g.moveTo(root,y);
+      g.quadraticCurveTo(root+dx*.25,tip+9,root+dx,tip);g.stroke();
+      for(let j=1;j<=5;j++){
+        const t=j/6,px=root+dx*(.5*t+.5*t*t);
+        const py=y-2*(h-9)*(1-t)*t-h*t*t;
+        const leaf=(1-t)*16+3;
+        for(const side of [-1,1]){
+          g.beginPath();g.moveTo(px,py);
+          g.quadraticCurveTo(px+side*leaf*.7,py-leaf,px+side*leaf,py-leaf*.65);
+          g.quadraticCurveTo(px+side*leaf*.55,py+1,px,py);
+          g.fillStyle=side<0?'#578b57':'#77a361';g.fill();
+        }
+      }
+    }
   }
   return layer;
 }

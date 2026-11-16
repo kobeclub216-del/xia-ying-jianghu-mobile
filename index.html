@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><title>俠影江湖：群俠亂鬥 v0.09-C-Art-Test｜A4-52 弓兵步幅校準</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171b20;touch-action:none;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",sans-serif}#wrap{position:fixed;inset:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:flex;align-items:center;justify-content:center}canvas{display:block;background:#9ab878;touch-action:none}#rotate{display:none;position:fixed;inset:0;background:#111;color:#fff;z-index:9;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:20px}#creator{position:fixed;inset:0;z-index:8;background:#111d;display:flex;align-items:center;justify-content:center;color:#fff}#card{width:min(560px,86vw);background:#1e2935;border:2px solid #ffffffaa;border-radius:14px;padding:22px;box-sizing:border-box;text-align:center}#card h1{font-size:28px;margin:0 0 18px}#nameInput{width:82%;font-size:20px;padding:10px;border-radius:8px;border:0;text-align:center}.classes{display:flex;gap:10px;justify-content:center;margin:18px 0}.classBtn{font-size:18px;padding:12px 20px;border-radius:9px;border:2px solid #ffffff55;background:#2b3540;color:#fff}.classBtn.sel{border-color:#fff4b0;background:#355f82}#startBtn{font-size:20px;font-weight:bold;padding:12px 38px;border:0;border-radius:9px;background:#c8a45b;color:#171b20}#hint{font-size:14px;color:#ccc;margin:12px 0 0}@media(orientation:portrait){#rotate{display:flex}}</style></head><body><div id="wrap"><canvas id="game"></canvas></div><div id="creator"><div id="card"><h1>建立你的江湖角色</h1><input id="nameInput" maxlength="8" placeholder="輸入角色名稱"><div class="classes"><button class="classBtn sel" data-job="劍俠">劍俠</button><button class="classBtn" data-job="遊俠">遊俠</button><button class="classBtn" data-job="武者">武者</button></div><button id="startBtn">踏入江湖</button><div id="hint">劍俠：劍　｜　遊俠：弓　｜　武者：長槍</div></div></div><div id="rotate">請將 iPhone 轉成橫向遊玩</div><script>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><title>俠影江湖：群俠亂鬥 v0.09-C-Art-Test｜A4-53 弓兵步態與收步</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171b20;touch-action:none;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",sans-serif}#wrap{position:fixed;inset:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:flex;align-items:center;justify-content:center}canvas{display:block;background:#9ab878;touch-action:none}#rotate{display:none;position:fixed;inset:0;background:#111;color:#fff;z-index:9;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:20px}#creator{position:fixed;inset:0;z-index:8;background:#111d;display:flex;align-items:center;justify-content:center;color:#fff}#card{width:min(560px,86vw);background:#1e2935;border:2px solid #ffffffaa;border-radius:14px;padding:22px;box-sizing:border-box;text-align:center}#card h1{font-size:28px;margin:0 0 18px}#nameInput{width:82%;font-size:20px;padding:10px;border-radius:8px;border:0;text-align:center}.classes{display:flex;gap:10px;justify-content:center;margin:18px 0}.classBtn{font-size:18px;padding:12px 20px;border-radius:9px;border:2px solid #ffffff55;background:#2b3540;color:#fff}.classBtn.sel{border-color:#fff4b0;background:#355f82}#startBtn{font-size:20px;font-weight:bold;padding:12px 38px;border:0;border-radius:9px;background:#c8a45b;color:#171b20}#hint{font-size:14px;color:#ccc;margin:12px 0 0}@media(orientation:portrait){#rotate{display:flex}}</style></head><body><div id="wrap"><canvas id="game"></canvas></div><div id="creator"><div id="card"><h1>建立你的江湖角色</h1><input id="nameInput" maxlength="8" placeholder="輸入角色名稱"><div class="classes"><button class="classBtn sel" data-job="劍俠">劍俠</button><button class="classBtn" data-job="遊俠">遊俠</button><button class="classBtn" data-job="武者">武者</button></div><button id="startBtn">踏入江湖</button><div id="hint">劍俠：劍　｜　遊俠：弓　｜　武者：長槍</div></div></div><div id="rotate">請將 iPhone 轉成橫向遊玩</div><script>
 const c=document.getElementById('game'),ctx=c.getContext('2d'),W=1280,H=720;
 const wrap=document.getElementById('wrap');
 let spriteAspect=1;
@@ -812,7 +812,9 @@ let banditArcherReady=false;
 banditArcherSprite.onload=()=>{banditArcherReady=true};
 banditArcherSprite.src='assets/bandit-archer-a440.webp';
 const archerRunFrames=[[2,2,110,155,55,153],[162,2,86,155,41,155],[322,2,110,155,59,153],[2,174,118,155,61,153],[162,174,90,155,41,155],[322,174,109,155,58,153]];
-const archerRunFrameEnds=[20,68,97,118,165,194];
+// Keep the calibrated stride length while distributing the poses more evenly.
+const archerRunFrameEnds=[26,60,97,123,157,194];
+const archerFootPlant=[0,1.2,2.5,0,1.2,2.5];
 const archerRunCycle=archerRunFrameEnds[archerRunFrameEnds.length-1];
 const archerRunSprite=new Image();
 let archerRunReady=false;
@@ -830,6 +832,7 @@ function trackEnemyMotion(e){
     return motion;
   }
   const dt=clamp((last-motion.time)/1000,0,.05);
+  motion.dt=dt;
   const dx=e.x-motion.x,dy=e.y-motion.y;
   const step=Math.hypot(dx,dy);
   const acting=e.hit>0||e.down>0||e.aimT>0||e.warn>0||e.artStrike>0||e.chargeWarn>0||e.chargeT>0;
@@ -858,11 +861,34 @@ function drawBanditArcher(e){
   const aiming=e.aimT>0,firing=e.artStrike>0;
   const motion=trackEnemyMotion(e);
   const hurt=e.hit>0||e.down>0;
-  const moving=!hurt&&!aiming&&!firing&&motion.pace>.25;
-  const running=moving&&archerRunReady;
+  const dt=motion.dt||0;
+  if(hurt||firing)motion.archerStepping=false;
+  else if(!aiming&&motion.pace>.23)motion.archerStepping=true;
+  else if(motion.pace<.12)motion.archerStepping=false;
+
+  // The aiming line still appears immediately. Let the body settle briefly first.
+  if(aiming){
+    if(!motion.archerAiming)motion.archerSettle=motion.archerStepping?.065:0;
+    else motion.archerSettle=Math.max(0,motion.archerSettle-dt);
+  }else motion.archerSettle=0;
+  motion.archerAiming=aiming;
+  if(aiming||hurt||firing)motion.archerStepping=false;
+
+  const running=motion.archerStepping&&archerRunReady;
   const frame=running?archerRunFrameEnds.findIndex(end=>motion.runDistance<end):
-    hurt?4:aiming?2:firing?3:moving?Math.floor(motion.phase):0;
+    hurt?4:aiming?(motion.archerSettle>0?5:2):firing?3:motion.archerStepping?1:0;
   const [sx,sy,w,h,root,sole]=(running?archerRunFrames:banditArcherFrames)[frame];
+  let lift=0,tilt=0;
+  if(running){
+    const from=frame?archerRunFrameEnds[frame-1]:0;
+    const t=(motion.runDistance-from)/(archerRunFrameEnds[frame]-from);
+    const next=(frame+1)%archerRunFrames.length;
+    // Shift the vertical anchor continuously across the contact and push-off poses.
+    lift=(archerFootPlant[frame]*(1-t)+archerFootPlant[next]*t)*motion.pace;
+    tilt=motion.lean*.65;
+  }
+  motion.archerLift=(motion.archerLift||0)+(lift-(motion.archerLift||0))*(1-Math.exp(-dt*24));
+  motion.archerTilt=(motion.archerTilt||0)+(tilt-(motion.archerTilt||0))*(1-Math.exp(-dt*20));
   const face=aiming||firing?(e.artFace||motion.face):motion.face;
   const scale=banditScale*spriteZoom;
   ctx.save();
@@ -872,10 +898,10 @@ function drawBanditArcher(e){
   }
   ctx.translate(e.x,e.y+43);
   ctx.fillStyle='#201b164d';ctx.beginPath();ctx.ellipse(0,0,21,7,0,0,Math.PI*2);ctx.fill();
-  if(!running)ctx.rotate(motion.lean);
+  ctx.rotate(motion.archerTilt);
   ctx.scale(face*spriteAspect,1);
-  const lift=running?0:motion.lift;
-  ctx.drawImage(running?archerRunSprite:banditArcherSprite,sx,sy,w,h,-root*scale,-sole*scale-lift,w*scale,h*scale);
+  ctx.drawImage(running?archerRunSprite:banditArcherSprite,
+    sx,sy,w,h,-root*scale,-sole*scale-motion.archerLift,w*scale,h*scale);
   ctx.restore();
 }
 

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><title>俠影江湖：群俠亂鬥 v0.09-C-Art-Test｜A4-44 山道美術與移動邊界</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171b20;touch-action:none;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",sans-serif}#wrap{position:fixed;inset:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:flex;align-items:center;justify-content:center}canvas{display:block;background:#9ab878;touch-action:none}#rotate{display:none;position:fixed;inset:0;background:#111;color:#fff;z-index:9;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:20px}#creator{position:fixed;inset:0;z-index:8;background:#111d;display:flex;align-items:center;justify-content:center;color:#fff}#card{width:min(560px,86vw);background:#1e2935;border:2px solid #ffffffaa;border-radius:14px;padding:22px;box-sizing:border-box;text-align:center}#card h1{font-size:28px;margin:0 0 18px}#nameInput{width:82%;font-size:20px;padding:10px;border-radius:8px;border:0;text-align:center}.classes{display:flex;gap:10px;justify-content:center;margin:18px 0}.classBtn{font-size:18px;padding:12px 20px;border-radius:9px;border:2px solid #ffffff55;background:#2b3540;color:#fff}.classBtn.sel{border-color:#fff4b0;background:#355f82}#startBtn{font-size:20px;font-weight:bold;padding:12px 38px;border:0;border-radius:9px;background:#c8a45b;color:#171b20}#hint{font-size:14px;color:#ccc;margin:12px 0 0}@media(orientation:portrait){#rotate{display:flex}}</style></head><body><div id="wrap"><canvas id="game"></canvas></div><div id="creator"><div id="card"><h1>建立你的江湖角色</h1><input id="nameInput" maxlength="8" placeholder="輸入角色名稱"><div class="classes"><button class="classBtn sel" data-job="劍俠">劍俠</button><button class="classBtn" data-job="遊俠">遊俠</button><button class="classBtn" data-job="武者">武者</button></div><button id="startBtn">踏入江湖</button><div id="hint">劍俠：劍　｜　遊俠：弓　｜　武者：長槍</div></div></div><div id="rotate">請將 iPhone 轉成橫向遊玩</div><script>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><title>俠影江湖：群俠亂鬥 v0.09-C-Art-Test｜A4-45 竹林山道與寨門燈火</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171b20;touch-action:none;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",sans-serif}#wrap{position:fixed;inset:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:flex;align-items:center;justify-content:center}canvas{display:block;background:#9ab878;touch-action:none}#rotate{display:none;position:fixed;inset:0;background:#111;color:#fff;z-index:9;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:20px}#creator{position:fixed;inset:0;z-index:8;background:#111d;display:flex;align-items:center;justify-content:center;color:#fff}#card{width:min(560px,86vw);background:#1e2935;border:2px solid #ffffffaa;border-radius:14px;padding:22px;box-sizing:border-box;text-align:center}#card h1{font-size:28px;margin:0 0 18px}#nameInput{width:82%;font-size:20px;padding:10px;border-radius:8px;border:0;text-align:center}.classes{display:flex;gap:10px;justify-content:center;margin:18px 0}.classBtn{font-size:18px;padding:12px 20px;border-radius:9px;border:2px solid #ffffff55;background:#2b3540;color:#fff}.classBtn.sel{border-color:#fff4b0;background:#355f82}#startBtn{font-size:20px;font-weight:bold;padding:12px 38px;border:0;border-radius:9px;background:#c8a45b;color:#171b20}#hint{font-size:14px;color:#ccc;margin:12px 0 0}@media(orientation:portrait){#rotate{display:flex}}</style></head><body><div id="wrap"><canvas id="game"></canvas></div><div id="creator"><div id="card"><h1>建立你的江湖角色</h1><input id="nameInput" maxlength="8" placeholder="輸入角色名稱"><div class="classes"><button class="classBtn sel" data-job="劍俠">劍俠</button><button class="classBtn" data-job="遊俠">遊俠</button><button class="classBtn" data-job="武者">武者</button></div><button id="startBtn">踏入江湖</button><div id="hint">劍俠：劍　｜　遊俠：弓　｜　武者：長槍</div></div></div><div id="rotate">請將 iPhone 轉成橫向遊玩</div><script>
 const c=document.getElementById('game'),ctx=c.getContext('2d'),W=1280,H=720;
 const wrap=document.getElementById('wrap');
 let spriteAspect=1;
@@ -305,12 +305,12 @@ function paintBambooScenery(section){
   let seed=312;
   const rand=()=>((seed=(Math.imul(seed,1664525)+1013904223)>>>0)/4294967296);
   const sky=g.createLinearGradient(0,0,0,H);
-  sky.addColorStop(0,boss?'#909a98':'#becbc4');
-  sky.addColorStop(.53,boss?'#bec0a7':'#aab4a0');
-  sky.addColorStop(1,'#828e75');
+  sky.addColorStop(0,boss?'#7d939e':'#a9d0cb');
+  sky.addColorStop(.53,boss?'#d6b48a':'#b3c7a4');
+  sky.addColorStop(1,'#577c68');
   g.fillStyle=sky;g.fillRect(0,0,W,H);
   for(let band=0;band<3;band++){
-    g.fillStyle=['#a8b9ae','#98aa9d','#899d8b'][band];
+    g.fillStyle=['#8eafb5','#729d9c','#598882'][band];
     g.beginPath();g.moveTo(-30,420);
     for(let x=-30;x<=W+60;x+=28){
       const y=152+band*46+42*Math.sin((x+section*140)*.008+band*2)+23*Math.cos((x+section*140)*.015-band);
@@ -324,8 +324,8 @@ function paintBambooScenery(section){
   g.fillStyle=haze;g.fillRect(0,0,W,365);
   for(let band=0;band<2;band++){
     const ground=band===0?264:341;
-    g.strokeStyle=band===0?'#879b8c':'#748a76';
-    g.fillStyle=band===0?'#94a698':'#819580';
+    g.strokeStyle=band===0?'#6e9a83':'#40795c';
+    g.fillStyle=band===0?'#81a783':'#568a5c';
     for(let i=0;i<46;i++){
       const x=rand()*W,y=ground+rand()*39,h=62+rand()*200,lean=(rand()-.5)*55;
       const width=(band+1)*1.7+rand()*2;
@@ -333,12 +333,12 @@ function paintBambooScenery(section){
       g.lineWidth=width;
       g.beginPath();g.moveTo(x,y);g.quadraticCurveTo(x+lean*.4,y-h*.54,x+lean,y-h);g.stroke();
       if(band===1){
-        g.strokeStyle='#697e6c';g.lineWidth=1.2;
+        g.strokeStyle='#35684e';g.lineWidth=1.2;
         for(let j=1;j<=5;j++){
           const t=j/6,px=x+lean*(.8*t+.2*t*t),py=y-h*(1.08*t-.08*t*t);
           g.beginPath();g.moveTo(px-width*.62,py);g.lineTo(px+width*.62,py-1);g.stroke();
         }
-        g.strokeStyle='#748a76';
+        g.strokeStyle='#40795c';
       }
       for(let j=1;j<=4;j++){
         const t=j/5,px=x+lean*t,py=y-h*t,side=(i+j)%2?1:-1;
@@ -346,9 +346,23 @@ function paintBambooScenery(section){
       }
     }
   }
+  if(section===3){
+    // A narrow fall behind the ridge breaks up the bamboo without crossing the path.
+    const water=g.createLinearGradient(1000,170,1080,339);
+    water.addColorStop(0,'#d6e8d9');water.addColorStop(.64,'#8cc4bd');
+    water.addColorStop(1,'#abd0b800');
+    g.fillStyle=water;g.beginPath();g.moveTo(1038,197);
+    g.quadraticCurveTo(1027,271,993,330);g.lineTo(1067,331);
+    g.quadraticCurveTo(1066,270,1070,205);g.closePath();g.fill();
+    g.strokeStyle='#eff2d875';g.lineWidth=2;
+    for(let i=0;i<4;i++){
+      g.beginPath();g.moveTo(1042+i*7,218+i*5);
+      g.quadraticCurveTo(1038+i*7,271,1016+i*11,318);g.stroke();
+    }
+  }
   if(section===2||section===3){
     // A branch of the trail recedes into the bamboo behind the arena.
-    g.fillStyle='#b5b39a';
+    g.fillStyle='#c5b894';
     g.beginPath();g.moveTo(530,373);
     g.bezierCurveTo(627,306,784,304,910,253);
     g.bezierCurveTo(827,315,729,325,660,373);
@@ -356,7 +370,7 @@ function paintBambooScenery(section){
   }
   if(timber){
     const start=boss?260:875;
-    g.strokeStyle='#7e7866';g.lineWidth=11;
+    g.strokeStyle='#826148';g.lineWidth=11;
     for(const y of [280,310]){
       g.beginPath();g.moveTo(start,y);
       if(boss){g.lineTo(652,y-4);g.moveTo(882,y-6);}
@@ -365,37 +379,49 @@ function paintBambooScenery(section){
     for(let x=start;x<W;x+=24){
       if(boss&&x>635&&x<900)continue;
       const top=260+Math.sin(x*.12)*7;
-      g.fillStyle=x%5?'#88806d':'#766e5c';
+      g.fillStyle=x%5?'#926c4e':'#77543f';
       g.beginPath();g.moveTo(x,347);g.lineTo(x,top+13);
       g.lineTo(x+8,top);g.lineTo(x+17,top+13);g.lineTo(x+17,347);
       g.closePath();g.fill();
     }
     if(boss){
-      g.fillStyle='#6c6358';g.fillRect(641,190,23,158);g.fillRect(869,190,23,158);
-      g.fillStyle='#655f54';
+      g.fillStyle='#6b493b';g.fillRect(641,190,23,158);g.fillRect(869,190,23,158);
+      g.fillStyle='#4f5557';
       g.beginPath();g.moveTo(605,195);g.quadraticCurveTo(665,178,698,148);
       g.lineTo(835,148);g.quadraticCurveTo(871,178,929,195);
       g.quadraticCurveTo(769,211,605,195);g.fill();
-      g.fillStyle='#9c9280';g.fillRect(684,189,165,4);
+      g.fillStyle='#b28562';g.fillRect(684,189,165,4);
       for(const [x,side] of [[569,-1],[948,1]]){
-        g.fillStyle='#746a5d';g.fillRect(x,192,6,153);
-        g.fillStyle='#976f60';g.beginPath();g.moveTo(x+3,204);
+        g.fillStyle='#624b3b';g.fillRect(x,192,6,153);
+        g.fillStyle='#a54339';g.beginPath();g.moveTo(x+3,204);
         g.quadraticCurveTo(x+side*24,209,x+side*38,202);
         g.lineTo(x+side*35,271);g.quadraticCurveTo(x+side*19,278,x+3,268);
-        g.closePath();g.fill();
+        g.closePath();g.fill();g.strokeStyle='#d7a15b';g.lineWidth=2;g.stroke();
+        g.fillStyle='#d9a15b';g.fillRect(x+side*19-3,226,6,23);
       }
+    }
+    for(const x of boss?[683,851]:[984,1120]){
+      const y=boss?252:286;
+      const glow=g.createRadialGradient(x,y,4,x,y,52);
+      glow.addColorStop(0,'#ffcc6db3');glow.addColorStop(1,'#ffb45000');
+      g.fillStyle=glow;g.fillRect(x-52,y-52,104,104);
+      g.strokeStyle='#674632';g.lineWidth=2;
+      g.beginPath();g.moveTo(x,y-32);g.lineTo(x,y-10);g.stroke();
+      g.fillStyle='#743f32';g.fillRect(x-10,y-11,20,24);
+      g.fillStyle='#ed9e48';g.fillRect(x-8,y-8,16,18);
+      g.fillStyle='#ffe0a0';g.fillRect(x-3,y-7,6,15);
     }
   }
   const road=g.createLinearGradient(0,340,0,610);
-  road.addColorStop(0,boss?'#9f9582':'#989a82');
-  road.addColorStop(.27,boss?'#b7a58a':'#aaa78b');
-  road.addColorStop(1,boss?'#a89a82':'#a09f85');
+  road.addColorStop(0,boss?'#a79070':'#9f9d73');
+  road.addColorStop(.27,boss?'#c8ad82':'#bfb189');
+  road.addColorStop(1,boss?'#b29977':'#aa9f7c');
   g.fillStyle=road;
   g.beginPath();g.moveTo(0,roadBack(0));
   for(let x=0;x<=W;x+=8)g.lineTo(x,roadBack(x));
   for(let x=W;x>=0;x-=8)g.lineTo(x,roadFront(x));
   g.closePath();g.fill();
-  for(const [edge,color] of [[roadBack,'#626f5c'],[roadFront,'#6c7865']]){
+  for(const [edge,color] of [[roadBack,'#5f7653'],[roadFront,'#677b51']]){
     g.beginPath();g.moveTo(0,edge(0));
     for(let x=8;x<=W;x+=8)g.lineTo(x,edge(x));
     g.lineWidth=3;g.strokeStyle=color;g.stroke();
@@ -407,13 +433,13 @@ function paintBambooScenery(section){
     g.beginPath();g.moveTo(x-w*.55,y);g.lineTo(x-w*.4,y-h*.68);
     g.lineTo(x+w*.02,y-h);g.lineTo(x+w*.38,y-h*.71);
     g.lineTo(x+w*.58,y);g.closePath();
-    g.fillStyle='#7d8879';g.fill();g.strokeStyle='#697565';g.lineWidth=1.35;g.stroke();
+    g.fillStyle='#768878';g.fill();g.strokeStyle='#526e60';g.lineWidth=1.35;g.stroke();
     g.beginPath();g.moveTo(x-w*.4,y-h*.68);g.lineTo(x+w*.02,y-h);
     g.lineTo(x+w*.38,y-h*.71);g.lineTo(x+w*.09,y-h*.42);
-    g.closePath();g.fillStyle='#9da593';g.fill();
+    g.closePath();g.fillStyle='#aab49a';g.fill();
     g.beginPath();g.moveTo(x+w*.09,y-h*.42);g.lineTo(x+w*.38,y-h*.71);
     g.lineTo(x+w*.58,y);g.lineTo(x+w*.18,y);g.closePath();
-    g.fillStyle='#707b6d';g.fill();
+    g.fillStyle='#607668';g.fill();
   }
   for(let i=0;i<250;i++){
     const x=rand()*W,y=roadBack(x)+9+rand()*(roadFront(x)-roadBack(x)-21);
@@ -429,8 +455,40 @@ function paintBambooScenery(section){
       g.lineTo(x+size,y);g.closePath();g.fill();
     }
   }
-  g.fillStyle='#768670';
+  g.fillStyle='#487651';
   g.beginPath();g.moveTo(0,651);g.bezierCurveTo(450,675,855,625,W,661);g.lineTo(W,H);g.lineTo(0,H);g.fill();
+  // Place the richer silhouettes beyond the walkable road.
+  const plants=[
+    [92,193,365,563,1000,1170],
+    [100,370,478,728,944,1060],
+    [127,312,485,675,967,1130],
+    [110,298,521,628,782,1185],
+    [90,210,335,484,1017,1160]
+  ][section-1];
+  for(const x of plants){
+    const y=roadBack(x)-6;
+    for(let i=0;i<7;i++){
+      const dx=(i-3)*9+(rand()-.5)*8;
+      const h=12+rand()*20;
+      g.beginPath();g.moveTo(x,y);
+      g.quadraticCurveTo(x+dx*.65,y-h*.8,x+dx,y-h);
+      g.quadraticCurveTo(x+dx*.83,y-h*.36,x,y);
+      g.fillStyle=['#396446','#5c864e','#88a25a'][i%3];g.fill();
+      if(section<=2&&i%3===0){
+        g.beginPath();g.ellipse(x+dx,y-h,3,2.3,.2,0,Math.PI*2);
+        g.fillStyle=i===0?'#deba69':'#e6cc8f';g.fill();
+      }
+    }
+  }
+  for(let i=0;i<22;i++){
+    const x=(i+.5)*W/22+(rand()-.5)*20;
+    const y=roadFront(x)+27+rand()*94;
+    const w=21+rand()*23,h=12+rand()*26;
+    g.fillStyle=i%2?'#60854f':'#527e56';
+    g.beginPath();g.moveTo(x-w,y);
+    g.quadraticCurveTo(x-w*.55,y-h,x,y-h*.56);
+    g.quadraticCurveTo(x+w*.55,y-h,x+w,y);g.closePath();g.fill();
+  }
   return layer;
 }
 function inkShape(points,fill){

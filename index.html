@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><title>俠影江湖：群俠亂鬥 v0.09-C-Art-Test｜A4-43 出口引導</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171b20;touch-action:none;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",sans-serif}#wrap{position:fixed;inset:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:flex;align-items:center;justify-content:center}canvas{display:block;background:#9ab878;touch-action:none}#rotate{display:none;position:fixed;inset:0;background:#111;color:#fff;z-index:9;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:20px}#creator{position:fixed;inset:0;z-index:8;background:#111d;display:flex;align-items:center;justify-content:center;color:#fff}#card{width:min(560px,86vw);background:#1e2935;border:2px solid #ffffffaa;border-radius:14px;padding:22px;box-sizing:border-box;text-align:center}#card h1{font-size:28px;margin:0 0 18px}#nameInput{width:82%;font-size:20px;padding:10px;border-radius:8px;border:0;text-align:center}.classes{display:flex;gap:10px;justify-content:center;margin:18px 0}.classBtn{font-size:18px;padding:12px 20px;border-radius:9px;border:2px solid #ffffff55;background:#2b3540;color:#fff}.classBtn.sel{border-color:#fff4b0;background:#355f82}#startBtn{font-size:20px;font-weight:bold;padding:12px 38px;border:0;border-radius:9px;background:#c8a45b;color:#171b20}#hint{font-size:14px;color:#ccc;margin:12px 0 0}@media(orientation:portrait){#rotate{display:flex}}</style></head><body><div id="wrap"><canvas id="game"></canvas></div><div id="creator"><div id="card"><h1>建立你的江湖角色</h1><input id="nameInput" maxlength="8" placeholder="輸入角色名稱"><div class="classes"><button class="classBtn sel" data-job="劍俠">劍俠</button><button class="classBtn" data-job="遊俠">遊俠</button><button class="classBtn" data-job="武者">武者</button></div><button id="startBtn">踏入江湖</button><div id="hint">劍俠：劍　｜　遊俠：弓　｜　武者：長槍</div></div></div><div id="rotate">請將 iPhone 轉成橫向遊玩</div><script>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><title>俠影江湖：群俠亂鬥 v0.09-C-Art-Test｜A4-44 山道美術與移動邊界</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171b20;touch-action:none;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",sans-serif}#wrap{position:fixed;inset:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:flex;align-items:center;justify-content:center}canvas{display:block;background:#9ab878;touch-action:none}#rotate{display:none;position:fixed;inset:0;background:#111;color:#fff;z-index:9;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:20px}#creator{position:fixed;inset:0;z-index:8;background:#111d;display:flex;align-items:center;justify-content:center;color:#fff}#card{width:min(560px,86vw);background:#1e2935;border:2px solid #ffffffaa;border-radius:14px;padding:22px;box-sizing:border-box;text-align:center}#card h1{font-size:28px;margin:0 0 18px}#nameInput{width:82%;font-size:20px;padding:10px;border-radius:8px;border:0;text-align:center}.classes{display:flex;gap:10px;justify-content:center;margin:18px 0}.classBtn{font-size:18px;padding:12px 20px;border-radius:9px;border:2px solid #ffffff55;background:#2b3540;color:#fff}.classBtn.sel{border-color:#fff4b0;background:#355f82}#startBtn{font-size:20px;font-weight:bold;padding:12px 38px;border:0;border-radius:9px;background:#c8a45b;color:#171b20}#hint{font-size:14px;color:#ccc;margin:12px 0 0}@media(orientation:portrait){#rotate{display:flex}}</style></head><body><div id="wrap"><canvas id="game"></canvas></div><div id="creator"><div id="card"><h1>建立你的江湖角色</h1><input id="nameInput" maxlength="8" placeholder="輸入角色名稱"><div class="classes"><button class="classBtn sel" data-job="劍俠">劍俠</button><button class="classBtn" data-job="遊俠">遊俠</button><button class="classBtn" data-job="武者">武者</button></div><button id="startBtn">踏入江湖</button><div id="hint">劍俠：劍　｜　遊俠：弓　｜　武者：長槍</div></div></div><div id="rotate">請將 iPhone 轉成橫向遊玩</div><script>
 const c=document.getElementById('game'),ctx=c.getContext('2d'),W=1280,H=720;
 const wrap=document.getElementById('wrap');
 let spriteAspect=1;
@@ -137,6 +137,15 @@ const chapterStages=[
   {name:'山賊頭目'}
 ];
 const stageExit={x:1160,y:330,halfHeight:64};
+// Canvas road edges are in ground coordinates, below each actor's combat anchor.
+function roadBack(x){return 361-13*Math.sin(x/W*Math.PI*.92)-11*x/W;}
+function roadFront(x){return 600+11*Math.sin(x/W*Math.PI*1.35);}
+function keepOnRoad(actor,footOffset,minX,maxX){
+  if(mapId!==1)return;
+  actor.x=clamp(actor.x,minX,maxX);
+  actor.y=clamp(actor.y,roadBack(actor.x)-footOffset+5,
+    Math.min(555,roadFront(actor.x)-footOffset-5));
+}
 function stageExitOpen(){
   return mapId===1&&stage<chapterStages.length&&!gameOver&&!enemies.some(e=>e.hp>0);
 }
@@ -148,9 +157,11 @@ function makeStage(n){
   return Array.from({length:(melee||0)+(archers||0)},(_,i)=>{
     const archer=i>=melee,j=archer?i-melee:i;
     const max=archer?hp-8:hp;
-    return {x:archer?1080+(j%2)*48:680+Math.floor(j/3)*155+(j%3)*31,
+    const enemy={x:archer?1080+(j%2)*48:680+Math.floor(j/3)*155+(j%3)*31,
       y:archer?235+j*112:235+(j*73)%270,hp:max,max,cd:archer?.65+j*.42:j*.17,
       down:0,hit:0,boss:false,warn:0,archer,aimT:0};
+    keepOnRoad(enemy,43,55,1225);
+    return enemy;
   });
 }
 let enemies=makeStage(1);
@@ -171,7 +182,7 @@ c.addEventListener('touchstart',e=>{e.preventDefault();for(const t of e.changedT
   }
   continue;
 }if(bagOpen){if(q.x>=425&&q.x<=855&&q.y>=270&&q.y<=518){let i=Math.floor((q.y-270)/62);if(i>=0&&i<inventory.length)equipWeapon(inventory[i])}continue}if(gameOver){if(q.x>=480&&q.x<=800&&q.y>=500&&q.y<=610)retry();continue}if(q.x<430&&q.y>360&&joy.id===null){joy.id=t.identifier;joy.x=q.x;joy.y=q.y;updateJoy()}else for(const b of buttons)if(hitBtn(q,b)){if(b.type==='atk')attack();if(b.type==='dodge')dodge();if(b.type==='skill')skill()}}},{passive:false});c.addEventListener('touchmove',e=>{e.preventDefault();for(const t of e.changedTouches)if(t.identifier===joy.id){let q=pos(t);joy.x=q.x;joy.y=q.y;updateJoy()}},{passive:false});function releaseTouches(e){e.preventDefault();for(const t of e.changedTouches)if(t.identifier===joy.id)resetJoy()}c.addEventListener('touchend',releaseTouches,{passive:false});c.addEventListener('touchcancel',releaseTouches,{passive:false});addEventListener('blur',resetJoy);document.addEventListener('visibilitychange',()=>{if(document.hidden)resetJoy()});
-function impact(x,y){fx.push({x,y,t:.22,max:.22});shake=Math.max(shake,7);flash=.05}function damageEnemy(e,dmg,kb,down){e.hp-=dmg;e.hit=.11;e.down=Math.max(e.down,down);e.x+=kb;impact(e.x,e.y);fx.push({x:e.x,y:e.y-55,t:.7,max:.7,damage:true,value:dmg});if(e.hp<=0){score+=e.boss?100:10;gainExp(e.boss?40:12);fx.push({x:e.x,y:e.y,t:.6,max:.6,death:true});if(e.boss){bossDefeated=true;loot={x:e.x,y:e.y,name:'青鋼長劍',picked:false}}else if((!loot||loot.picked)&&Math.random()<.7)loot={x:e.x,y:e.y,name:'粗製鐵劍',picked:false}}}
+function impact(x,y){fx.push({x,y,t:.22,max:.22});shake=Math.max(shake,7);flash=.05}function damageEnemy(e,dmg,kb,down){e.hp-=dmg;e.hit=.11;e.down=Math.max(e.down,down);e.x+=kb;keepOnRoad(e,e.boss?52:43,55,1225);impact(e.x,e.y);fx.push({x:e.x,y:e.y-55,t:.7,max:.7,damage:true,value:dmg});if(e.hp<=0){score+=e.boss?100:10;gainExp(e.boss?40:12);fx.push({x:e.x,y:e.y,t:.6,max:.6,death:true});if(e.boss){bossDefeated=true;loot={x:e.x,y:e.y,name:'青鋼長劍',picked:false}}else if((!loot||loot.picked)&&Math.random()<.7)loot={x:e.x,y:e.y,name:'粗製鐵劍',picked:false}}}
 function shootBow(){p.attT=.42;rangerRapid=false;combo=0;comboT=0;let targets=enemies.filter(e=>e.hp>0),target=null,best=9999;targets.forEach(e=>{let dx=e.x-p.x;if(dx*p.face>-20){let d=dist(p,e);if(d<best&&d<650){best=d;target=e}}});let dx=p.face,dy=0;if(target){dx=target.x-p.x;dy=target.y-p.y;let d=Math.hypot(dx,dy)||1;dx/=d;dy/=d;p.face=dx>=0?1:-1}rangerShotFace=p.face;projectiles.push({x:p.x+p.face*32,y:p.y-8,dx,dy,speed:720,life:1.05,dmg:9+atkBonus()+levelAtk()+agiAtk()});fx.push({x:p.x+35*p.face,y:p.y-8,t:.18,max:.18,bow:true})}
 function spearAttack(){p.attT=.48;spearmanSweep=false;spearmanAttackFace=p.face;combo=0;comboT=0;fx.push({x:p.x,y:p.y,t:.35,max:.35,spear:true,face:p.face});let dmg=15+atkBonus()+levelAtk()+spearStatAtk();enemies.forEach(e=>{let front=(e.x-p.x)*p.face;if(e.hp>0&&front>-20&&front<190&&Math.abs(e.y-p.y)<95)damageEnemy(e,dmg,p.face*48,.25)})}
 function attack(){if(p.attT>0||p.dodgeT>0||win||gameOver||bagOpen||statsOpen||martialOpen)return;if(weaponType()==='弓'){shootBow();return}if(weaponType()==='長槍'){spearAttack();return}combo=comboT>0?Math.min(3,combo+1):1;comboT=.58;comboPop=.45;p.attT=.2;swordAttackStage=combo;swordAttackFace=p.face;fx.push({x:p.x,y:p.y,t:combo===3?.34:.2,max:combo===3?.34:.2,big:combo===3,face:p.face});let range=combo===3?125:98,dmg=(combo===3?20:13)+atkBonus()+levelAtk()+strAtk();enemies.forEach(e=>{if(e.hp>0&&Math.abs(e.y-p.y)<72&&((e.x-p.x)*p.face)>-15&&Math.abs(e.x-p.x)<range)damageEnemy(e,dmg,p.face*(combo===3?85:32),combo===3?.6:.13)})}function skill(){if(!canEquipWeapon(equipped))return;if(weaponType()==='長槍'){sweep();return}if(skillCD>0||p.dodgeT>0||win||gameOver||bagOpen||statsOpen||martialOpen)return;if(weaponType()==='弓'){rapidShot();return}if(weaponType()!=='劍'){fx.push({x:p.x,y:p.y,t:.8,max:.8,needSword:true});return}let advanced=equippedSword==='peidao'&&swordPath.peidao>0,face=p.face;skillCD=advanced?3.6:2.8;p.attT=advanced?.52:.44;swordAttackStage=advanced?5:4;swordAttackFace=face;shake=10;fx.push({x:p.x,y:p.y,t:advanced?.6:.5,max:advanced?.6:.5,skill:true,peidao:advanced,face});let swordBonus=(swordPath.yude-1)*3,range=advanced?270:205;let hits=0;enemies.forEach(e=>{let front=(e.x-p.x)*face;if(e.hp>0&&front>=0&&dist(p,e)<range){damageEnemy(e,(advanced?40:28)+swordBonus+atkBonus()+levelAtk()+Math.floor(strAtk()*.5)+innerAtk(),face*(advanced?145:120),advanced?.9:.78);hits++}});gainProficiency(advanced?'peidao':'yude',hits)}let classDodgeMove=null;
@@ -192,7 +203,7 @@ function dodge(){if(p.dodgeT<=0&&!win&&!gameOver&&!bagOpen&&!statsOpen&&!martial
       ranger:playerJob==='遊俠'};
     return;
   }
-  if(wolfEquipped()){wolfDash={remaining:136,face:p.face,speed:85/.32*1.3};fx.push({x:p.x,y:p.y,t:.3,max:.3,wolfTrail:true,face:p.face});return}p.x=clamp(p.x+p.face*85*(water?1.2:1),70,1210);if(water)for(let i=0;i<4;i++)fx.push({x:fromX+(p.x-fromX)*i/3,y:p.y,t:.48,max:.48,waterTrail:true})}}
+  if(wolfEquipped()){wolfDash={remaining:136,face:p.face,speed:85/.32*1.3};fx.push({x:p.x,y:p.y,t:.3,max:.3,wolfTrail:true,face:p.face});return}p.x=clamp(p.x+p.face*85*(water?1.2:1),70,1210);keepOnRoad(p,33,70,1210);if(water)for(let i=0;i<4;i++)fx.push({x:fromX+(p.x-fromX)*i/3,y:p.y,t:.48,max:.48,waterTrail:true})}}
 function updateBanditArcher(e,dt){
   if(e.hit>0||e.down>0){e.aimT=0;return}
   if(e.aimT>0){
@@ -227,7 +238,7 @@ function bossHeavy(e){e.artStrike=.25;fx.push({x:e.x,y:e.y,t:.32,max:.32,heavy:t
 let last=performance.now();function loop(now){let dt=Math.min(.033,(now-last)/1000);last=now;update(dt);draw();requestAnimationFrame(loop)}requestAnimationFrame(loop);
 function update(dt){if(inventory.length)normalizeEquippedWeapon();if(win||gameOver||bagOpen||statsOpen||martialOpen)return;p.attT=Math.max(0,p.attT-dt);p.dodgeT=Math.max(0,p.dodgeT-dt);playerHurtT=Math.max(0,playerHurtT-dt);invuln=Math.max(0,invuln-dt);skillCD=Math.max(0,skillCD-dt);sweepCD=Math.max(0,sweepCD-dt);comboT=Math.max(0,comboT-dt);comboPop=Math.max(0,comboPop-dt);shake=Math.max(0,shake-28*dt);flash=Math.max(0,flash-dt);if(comboT===0)combo=0;fx.forEach(f=>f.t-=dt);fx=fx.filter(f=>f.t>0);let dx=joy.dx,dy=joy.dy,m=Math.hypot(dx,dy);if(m>1){dx/=m;dy/=m}if(Math.abs(dx)>.08)p.face=Math.sign(dx);const classDodging=!!classDodgeMove;
   if(classDodgeMove)advanceClassDodgeMove();
-  const wolfMoving=!!wolfDash;if(wolfDash){if(!wolfEquipped())wolfDash=null;else{const step=Math.min(wolfDash.remaining,wolfDash.speed*dt),before=p.x,face=wolfDash.face;p.x=clamp(p.x+face*step,70,1210);wolfDash.remaining-=step;fx.push({x:(before+p.x)/2,y:p.y,t:.3,max:.3,wolfTrail:true,face});if(wolfDash.remaining<=.00001||p.x===70||p.x===1210)wolfDash=null}}if(p.attT<=0&&!wolfMoving&&!classDodging){const moveSpeed=p.speed*(waterEquipped()?1.12:1);p.x=clamp(p.x+dx*moveSpeed*dt,70,1210);p.y=clamp(p.y+dy*moveSpeed*.72*dt,185,555)}if(rapidBurst){rapidBurst.t-=dt;while(rapidBurst&&rapidBurst.t<=0){if(p.dodgeT>0||weaponType()!=='弓'){rapidBurst=null;break}fireRapidArrow(rapidBurst);rapidBurst.left--;rapidBurst.t+=.14;if(rapidBurst.left===0)rapidBurst=null}}projectiles.forEach(a=>{a.x+=a.dx*a.speed*dt;a.y+=a.dy*a.speed*dt;a.life-=dt;if(a.life<=0)return;
+  const wolfMoving=!!wolfDash;if(wolfDash){if(!wolfEquipped())wolfDash=null;else{const step=Math.min(wolfDash.remaining,wolfDash.speed*dt),before=p.x,face=wolfDash.face;p.x=clamp(p.x+face*step,70,1210);wolfDash.remaining-=step;fx.push({x:(before+p.x)/2,y:p.y,t:.3,max:.3,wolfTrail:true,face});if(wolfDash.remaining<=.00001||p.x===70||p.x===1210)wolfDash=null}}if(p.attT<=0&&!wolfMoving&&!classDodging){const moveSpeed=p.speed*(waterEquipped()?1.12:1);p.x=clamp(p.x+dx*moveSpeed*dt,70,1210);p.y=clamp(p.y+dy*moveSpeed*.72*dt,185,555)}keepOnRoad(p,33,70,1210);if(rapidBurst){rapidBurst.t-=dt;while(rapidBurst&&rapidBurst.t<=0){if(p.dodgeT>0||weaponType()!=='弓'){rapidBurst=null;break}fireRapidArrow(rapidBurst);rapidBurst.left--;rapidBurst.t+=.14;if(rapidBurst.left===0)rapidBurst=null}}projectiles.forEach(a=>{a.x+=a.dx*a.speed*dt;a.y+=a.dy*a.speed*dt;a.life-=dt;if(a.life<=0)return;
   if(a.enemy){
     if(dist(a,p)<29){
       if(invuln<=0)hurtPlayer(a.dmg,.45);
@@ -235,7 +246,14 @@ function update(dt){if(inventory.length)normalizeEquippedWeapon();if(win||gameOv
     }
     return;
   }
-  if(a.life>0){for(const e of enemies){if(e.hp>0&&dist(a,e)<42){if(a.rapidHits)a.rapidHits.add(e);damageEnemy(e,a.dmg,a.dx*25,.08);a.life=0;break}}}});projectiles=projectiles.filter(a=>a.life>0&&a.x>-30&&a.x<W+30&&a.y>120&&a.y<620);if(rapidCastHits&&!rapidBurst&&!projectiles.some(a=>a.rapidHits===rapidCastHits))finishRapidCast();enemies.forEach(e=>{if(e.hp<=0)return;e.cd=Math.max(0,e.cd-dt);e.down=Math.max(0,e.down-dt);e.hit=Math.max(0,e.hit-dt);e.artStrike=Math.max(0,(e.artStrike||0)-dt);if(e.archer){updateBanditArcher(e,dt);return}if(e.boss&&e.chargeT>0){e.chargeT=Math.max(0,e.chargeT-dt);e.x=clamp(e.x+e.chargeDX*520*dt,55,1225);e.y=clamp(e.y+e.chargeDY*390*dt,180,560);if(!e.chargeHit&&dist(p,e)<75){e.chargeHit=true;if(invuln<=0){hurtPlayer(22,.55);p.x=clamp(p.x+e.chargeDX*75,70,1210);p.y=clamp(p.y+e.chargeDY*50,185,555);shake=10}else fx.push({x:p.x,y:p.y,t:.45,max:.45,dodged:true})}return}if(e.boss&&e.chargeWarn>0){let before=e.chargeWarn;e.chargeWarn=Math.max(0,e.chargeWarn-dt);if(before>0&&e.chargeWarn===0)beginCharge(e);return}if(e.warn>0){let before=e.warn;e.warn=Math.max(0,e.warn-dt);if(e.boss&&before>0&&e.warn===0)bossHeavy(e);return}if(e.down>0||e.hit>0)return;let d=dist(p,e),spd=e.boss?82:105;if(d>(e.boss?95:70)){e.x+=(p.x-e.x)/d*spd*dt;e.y+=(p.y-e.y)/d*(e.boss?68:82)*dt}else if(e.cd<=0){if(e.boss){if(e.nextMove===0){e.warn=.85;e.cd=1.6;e.artFace=p.x<e.x?-1:1;e.nextMove=1}else{startCharge(e);e.nextMove=0}}else{e.cd=1.15;e.artStrike=.24;e.artFace=p.x<e.x?-1:1;if(invuln<=0){hurtPlayer(9,.45);p.x+=(p.x>=e.x?1:-1)*28;shake=5}}}});if(loot&&!loot.picked&&dist(p,loot)<55){loot.picked=true;addItem(loot.name);score+=loot.name==='青鋼長劍'?75:25;fx.push({x:p.x,y:p.y,t:.8,max:.8,pick:true,name:loot.name})}if(p.hp<=0){finishRapidCast();wolfDash=null;p.hp=0;gameOver=true;resetJoy()}if(mapId===1&&!gameOver&&bossDefeated&&loot?.picked){
+  if(a.life>0){for(const e of enemies){if(e.hp>0&&dist(a,e)<42){if(a.rapidHits)a.rapidHits.add(e);damageEnemy(e,a.dmg,a.dx*25,.08);a.life=0;break}}}});projectiles=projectiles.filter(a=>a.life>0&&a.x>-30&&a.x<W+30&&a.y>120&&a.y<620);if(rapidCastHits&&!rapidBurst&&!projectiles.some(a=>a.rapidHits===rapidCastHits))finishRapidCast();enemies.forEach(e=>{if(e.hp<=0)return;e.cd=Math.max(0,e.cd-dt);e.down=Math.max(0,e.down-dt);e.hit=Math.max(0,e.hit-dt);e.artStrike=Math.max(0,(e.artStrike||0)-dt);if(e.archer){updateBanditArcher(e,dt);return}if(e.boss&&e.chargeT>0){e.chargeT=Math.max(0,e.chargeT-dt);e.x=clamp(e.x+e.chargeDX*520*dt,55,1225);e.y=clamp(e.y+e.chargeDY*390*dt,180,560);if(!e.chargeHit&&dist(p,e)<75){e.chargeHit=true;if(invuln<=0){hurtPlayer(22,.55);p.x=clamp(p.x+e.chargeDX*75,70,1210);p.y=clamp(p.y+e.chargeDY*50,185,555);shake=10}else fx.push({x:p.x,y:p.y,t:.45,max:.45,dodged:true})}return}if(e.boss&&e.chargeWarn>0){let before=e.chargeWarn;e.chargeWarn=Math.max(0,e.chargeWarn-dt);if(before>0&&e.chargeWarn===0)beginCharge(e);return}if(e.warn>0){let before=e.warn;e.warn=Math.max(0,e.warn-dt);if(e.boss&&before>0&&e.warn===0)bossHeavy(e);return}if(e.down>0||e.hit>0)return;let d=dist(p,e),spd=e.boss?82:105;if(d>(e.boss?95:70)){e.x+=(p.x-e.x)/d*spd*dt;e.y+=(p.y-e.y)/d*(e.boss?68:82)*dt}else if(e.cd<=0){if(e.boss){if(e.nextMove===0){e.warn=.85;e.cd=1.6;e.artFace=p.x<e.x?-1:1;e.nextMove=1}else{startCharge(e);e.nextMove=0}}else{e.cd=1.15;e.artStrike=.24;e.artFace=p.x<e.x?-1:1;if(invuln<=0){hurtPlayer(9,.45);p.x+=(p.x>=e.x?1:-1)*28;shake=5}}}});
+  if(mapId===1){
+    keepOnRoad(p,33,70,1210);
+    for(const enemy of enemies){
+      if(enemy.hp>0)keepOnRoad(enemy,enemy.boss?52:43,55,1225);
+    }
+  }
+  if(loot&&!loot.picked&&dist(p,loot)<55){loot.picked=true;addItem(loot.name);score+=loot.name==='青鋼長劍'?75:25;fx.push({x:p.x,y:p.y,t:.8,max:.8,pick:true,name:loot.name})}if(p.hp<=0){finishRapidCast();wolfDash=null;p.hp=0;gameOver=true;resetJoy()}if(mapId===1&&!gameOver&&bossDefeated&&loot?.picked){
   finishRapidCast();win=true;resetJoy();
 }else if(stageExitOpen()&&p.x>=stageExit.x&&Math.abs(p.y-stageExit.y)<=stageExit.halfHeight&&joy.dx>.12){
   startStage(stage+1);
@@ -314,6 +332,14 @@ function paintBambooScenery(section){
       if(x>bambooOpening&&i%3!==0)continue;
       g.lineWidth=width;
       g.beginPath();g.moveTo(x,y);g.quadraticCurveTo(x+lean*.4,y-h*.54,x+lean,y-h);g.stroke();
+      if(band===1){
+        g.strokeStyle='#697e6c';g.lineWidth=1.2;
+        for(let j=1;j<=5;j++){
+          const t=j/6,px=x+lean*(.8*t+.2*t*t),py=y-h*(1.08*t-.08*t*t);
+          g.beginPath();g.moveTo(px-width*.62,py);g.lineTo(px+width*.62,py-1);g.stroke();
+        }
+        g.strokeStyle='#748a76';
+      }
       for(let j=1;j<=4;j++){
         const t=j/5,px=x+lean*t,py=y-h*t,side=(i+j)%2?1:-1;
         g.beginPath();g.moveTo(px,py);g.quadraticCurveTo(px+side*21,py-17,px+side*35,py-8);g.quadraticCurveTo(px+side*21,py-3,px,py);g.fill();
@@ -360,20 +386,43 @@ function paintBambooScenery(section){
       }
     }
   }
-  g.fillStyle=boss?'#9e9a86':'#9c9f85';g.beginPath();g.moveTo(0,365);
-  g.bezierCurveTo(300,300,775,371,W,316);g.lineTo(W,631);
-  g.bezierCurveTo(870,581,380,651,0,590);g.closePath();g.fill();
-  g.fillStyle=boss?'#b0a58e':'#a9a990';g.beginPath();g.moveTo(0,395);
-  g.bezierCurveTo(350,332,850,427,W,350);g.lineTo(W,565);
-  g.bezierCurveTo(970,526,330,590,0,536);g.closePath();g.fill();
+  const road=g.createLinearGradient(0,340,0,610);
+  road.addColorStop(0,boss?'#9f9582':'#989a82');
+  road.addColorStop(.27,boss?'#b7a58a':'#aaa78b');
+  road.addColorStop(1,boss?'#a89a82':'#a09f85');
+  g.fillStyle=road;
+  g.beginPath();g.moveTo(0,roadBack(0));
+  for(let x=0;x<=W;x+=8)g.lineTo(x,roadBack(x));
+  for(let x=W;x>=0;x-=8)g.lineTo(x,roadFront(x));
+  g.closePath();g.fill();
+  for(const [edge,color] of [[roadBack,'#626f5c'],[roadFront,'#6c7865']]){
+    g.beginPath();g.moveTo(0,edge(0));
+    for(let x=8;x<=W;x+=8)g.lineTo(x,edge(x));
+    g.lineWidth=3;g.strokeStyle=color;g.stroke();
+  }
+  // Muted cel-shaded rock faces stay on the far side of the road.
+  for(let i=0;i<(boss?13:27);i++){
+    const x=rand()*W,y=roadBack(x)-1-rand()*23;
+    const w=18+rand()*46,h=9+rand()*(section===3?39:23);
+    g.beginPath();g.moveTo(x-w*.55,y);g.lineTo(x-w*.4,y-h*.68);
+    g.lineTo(x+w*.02,y-h);g.lineTo(x+w*.38,y-h*.71);
+    g.lineTo(x+w*.58,y);g.closePath();
+    g.fillStyle='#7d8879';g.fill();g.strokeStyle='#697565';g.lineWidth=1.35;g.stroke();
+    g.beginPath();g.moveTo(x-w*.4,y-h*.68);g.lineTo(x+w*.02,y-h);
+    g.lineTo(x+w*.38,y-h*.71);g.lineTo(x+w*.09,y-h*.42);
+    g.closePath();g.fillStyle='#9da593';g.fill();
+    g.beginPath();g.moveTo(x+w*.09,y-h*.42);g.lineTo(x+w*.38,y-h*.71);
+    g.lineTo(x+w*.58,y);g.lineTo(x+w*.18,y);g.closePath();
+    g.fillStyle='#707b6d';g.fill();
+  }
   for(let i=0;i<250;i++){
-    const x=rand()*W,y=320+rand()*H*.55;
+    const x=rand()*W,y=roadBack(x)+9+rand()*(roadFront(x)-roadBack(x)-21);
     g.strokeStyle=i%2?'#b4b19777':'#777f6860';g.lineWidth=1+rand()*2;
     g.beginPath();g.moveTo(x,y);g.quadraticCurveTo(x+5,y-2,x+5+rand()*15,y-1);g.stroke();
   }
   if(section>=3){
     for(let i=0;i<19;i++){
-      const x=rand()*W,y=(i%2?370:591)+rand()*19,size=6+rand()*16;
+      const x=rand()*W,y=(i%2?roadBack(x):roadFront(x))+rand()*15,size=6+rand()*16;
       g.fillStyle=i%3?'#858975':'#92917d';
       g.beginPath();g.moveTo(x-size,y);
       g.quadraticCurveTo(x-size*.25,y-size*.7,x+size*.5,y-size*.48);
@@ -531,6 +580,7 @@ function advanceClassDodgeMove(){
   const beforeX=p.x,beforeY=p.y;
   p.x=clamp(p.x+step.delta*advance,70,1210);
   p.y=clamp(p.y+step.deltaY*advance,185,555);
+  keepOnRoad(p,33,70,1210);
   if(beforeX!==p.x||beforeY!==p.y){
     if(step.wolf)fx.push({x:(beforeX+p.x)/2,y:(beforeY+p.y)/2,t:.3,max:.3,wolfTrail:true,face:step.direction});
     if(step.water)for(let i=0;i<4;i++){

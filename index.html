@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><title>俠影江湖：群俠亂鬥 v0.09-C-Art-Test｜A4-54 小圖示選單</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171b20;touch-action:none;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",sans-serif}#wrap{position:fixed;inset:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:flex;align-items:center;justify-content:center}canvas{display:block;background:#9ab878;touch-action:none}#rotate{display:none;position:fixed;inset:0;background:#111;color:#fff;z-index:9;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:20px}#creator{position:fixed;inset:0;z-index:8;background:#111d;display:flex;align-items:center;justify-content:center;color:#fff}#card{width:min(560px,86vw);background:#1e2935;border:2px solid #ffffffaa;border-radius:14px;padding:22px;box-sizing:border-box;text-align:center}#card h1{font-size:28px;margin:0 0 18px}#nameInput{width:82%;font-size:20px;padding:10px;border-radius:8px;border:0;text-align:center}.classes{display:flex;gap:10px;justify-content:center;margin:18px 0}.classBtn{font-size:18px;padding:12px 20px;border-radius:9px;border:2px solid #ffffff55;background:#2b3540;color:#fff}.classBtn.sel{border-color:#fff4b0;background:#355f82}#startBtn{font-size:20px;font-weight:bold;padding:12px 38px;border:0;border-radius:9px;background:#c8a45b;color:#171b20}#hint{font-size:14px;color:#ccc;margin:12px 0 0}@media(orientation:portrait){#rotate{display:flex}}</style></head><body><div id="wrap"><canvas id="game"></canvas></div><div id="creator"><div id="card"><h1>建立你的江湖角色</h1><input id="nameInput" maxlength="8" placeholder="輸入角色名稱"><div class="classes"><button class="classBtn sel" data-job="劍俠">劍俠</button><button class="classBtn" data-job="遊俠">遊俠</button><button class="classBtn" data-job="武者">武者</button></div><button id="startBtn">踏入江湖</button><div id="hint">劍俠：劍　｜　遊俠：弓　｜　武者：長槍</div></div></div><div id="rotate">請將 iPhone 轉成橫向遊玩</div><script>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><title>俠影江湖：群俠亂鬥 v0.09-C-Art-Test｜A4-55 國漫像素選單</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171b20;touch-action:none;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",sans-serif}#wrap{position:fixed;inset:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:flex;align-items:center;justify-content:center}canvas{display:block;background:#9ab878;touch-action:none}#rotate{display:none;position:fixed;inset:0;background:#111;color:#fff;z-index:9;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:20px}#creator{position:fixed;inset:0;z-index:8;background:#111d;display:flex;align-items:center;justify-content:center;color:#fff}#card{width:min(560px,86vw);background:#1e2935;border:2px solid #ffffffaa;border-radius:14px;padding:22px;box-sizing:border-box;text-align:center}#card h1{font-size:28px;margin:0 0 18px}#nameInput{width:82%;font-size:20px;padding:10px;border-radius:8px;border:0;text-align:center}.classes{display:flex;gap:10px;justify-content:center;margin:18px 0}.classBtn{font-size:18px;padding:12px 20px;border-radius:9px;border:2px solid #ffffff55;background:#2b3540;color:#fff}.classBtn.sel{border-color:#fff4b0;background:#355f82}#startBtn{font-size:20px;font-weight:bold;padding:12px 38px;border:0;border-radius:9px;background:#c8a45b;color:#171b20}#hint{font-size:14px;color:#ccc;margin:12px 0 0}@media(orientation:portrait){#rotate{display:flex}}</style></head><body><div id="wrap"><canvas id="game"></canvas></div><div id="creator"><div id="card"><h1>建立你的江湖角色</h1><input id="nameInput" maxlength="8" placeholder="輸入角色名稱"><div class="classes"><button class="classBtn sel" data-job="劍俠">劍俠</button><button class="classBtn" data-job="遊俠">遊俠</button><button class="classBtn" data-job="武者">武者</button></div><button id="startBtn">踏入江湖</button><div id="hint">劍俠：劍　｜　遊俠：弓　｜　武者：長槍</div></div></div><div id="rotate">請將 iPhone 轉成橫向遊玩</div><script>
 const c=document.getElementById('game'),ctx=c.getContext('2d'),W=1280,H=720;
 const wrap=document.getElementById('wrap');
 let spriteAspect=1;
@@ -1052,45 +1052,65 @@ function hudMeter(x,y,w,h,value,max,color){
   ctx.fillStyle=color;
   ctx.beginPath();ctx.roundRect(x,y,filled,h,Math.min(h,filled)/2);ctx.fill();
 }
+// Paint at native pixel size once, then draw with nearest-neighbor scaling.
+function paintCombatMenuArt(id){
+  const surface=document.createElement('canvas');
+  surface.width=surface.height=24;
+  const g=surface.getContext('2d');
+  const ink='#18201f';
+  function shape(color,points){
+    g.fillStyle=color;g.beginPath();g.moveTo(...points[0]);
+    for(const point of points.slice(1))g.lineTo(...point);
+    g.closePath();g.fill();
+  }
+  function block(color,x,y,w,h){g.fillStyle=color;g.fillRect(x,y,w,h);}
+  if(id==='martial'){
+    shape(ink,[[3,4],[16,1],[21,4],[21,19],[17,22],[3,22],[1,19],[1,7]]);
+    shape('#c39a61',[[3,17],[17,15],[20,16],[20,19],[17,21],[3,21]]);
+    shape('#f5dca2',[[4,17],[17,16],[20,16],[17,19],[4,20]]);
+    shape('#316270',[[3,6],[16,3],[19,5],[19,16],[16,18],[3,19]]);
+    shape('#589098',[[3,6],[16,3],[19,5],[16,6],[3,8]]);
+    shape('#243c43',[[3,8],[6,7],[6,18],[3,19]]);
+    block('#dcb777',4,9,3,1);block('#dcb777',4,13,3,1);block('#dcb777',4,17,3,1);
+    block('#f4d9a1',12,6,4,8);block('#bd925d',13,7,2,1);
+    block('#8b6548',13,10,2,1);block('#8b6548',13,12,2,1);
+    block('#9d4335',15,16,2,4);
+  }else if(id==='status'){
+    shape(ink,[[1,21],[3,17],[7,14],[6,11],[6,6],[3,5],[3,2],[6,1],[9,3],
+      [12,2],[16,3],[19,6],[19,9],[22,12],[19,14],[18,17],[16,17],[20,20],[22,23],[1,23]]);
+    shape('#b06c4d',[[8,9],[17,6],[18,10],[20,12],[18,13],[17,16],[14,17],[14,19],[9,17]]);
+    shape('#f0bd86',[[10,9],[16,6],[17,9],[17,11],[19,12],[17,13],[16,15],[13,16],[10,14]]);
+    shape('#383135',[[4,3],[6,2],[8,4],[12,3],[16,4],[18,7],[16,8],[13,7],
+      [11,10],[10,14],[7,13],[7,7],[5,6]]);
+    shape('#61504a',[[5,3],[7,3],[8,5],[12,4],[15,4],[16,5],[11,6],[8,8],[7,5]]);
+    block('#282a28',15,10,2,1);block('#f8d7a7',16,9,1,1);
+    shape('#367675',[[3,21],[8,16],[12,18],[15,18],[19,21],[20,22],[3,22]]);
+    shape('#73a9a0',[[4,20],[8,17],[11,19],[10,22],[5,22]]);
+    shape('#ead7a7',[[10,17],[13,19],[17,20],[15,22],[11,19]]);
+    block('#a44c3a',6,6,3,1);
+  }else{
+    shape(ink,[[3,9],[6,6],[9,6],[6,2],[10,1],[13,3],[17,1],[19,3],[16,7],
+      [21,10],[23,14],[22,19],[19,22],[5,22],[2,19],[1,15]]);
+    shape('#8a563d',[[3,11],[7,7],[16,7],[20,10],[22,14],[21,19],[18,21],[6,21],[3,18]]);
+    shape('#b77c50',[[4,11],[8,8],[15,8],[18,10],[19,14],[17,19],[7,20],[3,17]]);
+    shape('#e3b476',[[5,11],[9,8],[14,9],[15,12],[12,13],[9,12],[6,17],[4,16]]);
+    shape('#d59b62',[[8,3],[10,2],[13,4],[16,3],[17,3],[15,7],[10,7]]);
+    shape('#784736',[[16,9],[17,10],[20,14],[19,17],[18,14]]);
+    block('#e9ca89',8,7,9,2);block('#a34937',12,8,4,2);
+    shape('#b44d3a',[[13,9],[15,9],[17,13],[16,16],[14,13]]);
+    block('#f1be7e',6,16,2,1);
+  }
+  return surface;
+}
+const combatMenuArt=Object.fromEntries(combatMenuIcons.map(({id})=>[id,paintCombatMenuArt(id)]));
+
 function drawCombatMenuIcon({id,x},y){
   const selected=id==='martial'?martialOpen:id==='status'?statsOpen:bagOpen;
   hudPanel(x-31,y-28,62,56,selected);
   ctx.save();
   ctx.translate(x,y);
-  ctx.strokeStyle='#ffe8b9';
-  ctx.lineWidth=2.6;
-  ctx.lineCap='round';
-  ctx.lineJoin='round';
-  if(id==='martial'){
-    ctx.beginPath();
-    ctx.moveTo(0,-10);
-    ctx.quadraticCurveTo(-8,-15,-16,-12);
-    ctx.lineTo(-16,10);
-    ctx.quadraticCurveTo(-7,7,0,13);
-    ctx.quadraticCurveTo(7,7,16,10);
-    ctx.lineTo(16,-12);
-    ctx.quadraticCurveTo(8,-15,0,-10);
-    ctx.lineTo(0,13);
-    ctx.moveTo(-11,-5);ctx.lineTo(-5,-4);
-    ctx.moveTo(5,-4);ctx.lineTo(11,-5);
-    ctx.stroke();
-  }else if(id==='status'){
-    ctx.beginPath();
-    ctx.arc(0,-7,6,0,Math.PI*2);
-    ctx.moveTo(-13,13);
-    ctx.quadraticCurveTo(-13,3,0,3);
-    ctx.quadraticCurveTo(13,3,13,13);
-    ctx.closePath();ctx.stroke();
-  }else{
-    ctx.beginPath();
-    ctx.roundRect(-14,-8,28,22,6);
-    ctx.moveTo(-6,-8);
-    ctx.quadraticCurveTo(-6,-15,0,-15);
-    ctx.quadraticCurveTo(6,-15,6,-8);
-    ctx.moveTo(-13,1);ctx.lineTo(13,1);
-    ctx.moveTo(0,1);ctx.lineTo(0,6);
-    ctx.stroke();
-  }
+  ctx.imageSmoothingEnabled=false;
+  ctx.drawImage(combatMenuArt[id],-21,-21,42,42);
   if((id==='martial'&&martialPoints>0)||(id==='status'&&statPoints>0)){
     ctx.fillStyle='#ffca78';ctx.beginPath();ctx.arc(23,-20,4,0,Math.PI*2);ctx.fill();
   }

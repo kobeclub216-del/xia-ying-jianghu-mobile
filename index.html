@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><title>俠影江湖：群俠亂鬥 v0.09-C-Art-Test｜A4-33 三職業比例統一</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171b20;touch-action:none;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",sans-serif}#wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}canvas{display:block;background:#9ab878;touch-action:none}#rotate{display:none;position:fixed;inset:0;background:#111;color:#fff;z-index:9;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:20px}#creator{position:fixed;inset:0;z-index:8;background:#111d;display:flex;align-items:center;justify-content:center;color:#fff}#card{width:min(560px,86vw);background:#1e2935;border:2px solid #ffffffaa;border-radius:14px;padding:22px;box-sizing:border-box;text-align:center}#card h1{font-size:28px;margin:0 0 18px}#nameInput{width:82%;font-size:20px;padding:10px;border-radius:8px;border:0;text-align:center}.classes{display:flex;gap:10px;justify-content:center;margin:18px 0}.classBtn{font-size:18px;padding:12px 20px;border-radius:9px;border:2px solid #ffffff55;background:#2b3540;color:#fff}.classBtn.sel{border-color:#fff4b0;background:#355f82}#startBtn{font-size:20px;font-weight:bold;padding:12px 38px;border:0;border-radius:9px;background:#c8a45b;color:#171b20}#hint{font-size:14px;color:#ccc;margin:12px 0 0}@media(orientation:portrait){#rotate{display:flex}}</style></head><body><div id="wrap"><canvas id="game"></canvas></div><div id="creator"><div id="card"><h1>建立你的江湖角色</h1><input id="nameInput" maxlength="8" placeholder="輸入角色名稱"><div class="classes"><button class="classBtn sel" data-job="劍俠">劍俠</button><button class="classBtn" data-job="遊俠">遊俠</button><button class="classBtn" data-job="武者">武者</button></div><button id="startBtn">踏入江湖</button><div id="hint">劍俠：劍　｜　遊俠：弓　｜　武者：長槍</div></div></div><div id="rotate">請將 iPhone 轉成橫向遊玩</div><script>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><title>俠影江湖：群俠亂鬥 v0.09-C-Art-Test｜A4-34 遊俠與武者閃避</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171b20;touch-action:none;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",sans-serif}#wrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center}canvas{display:block;background:#9ab878;touch-action:none}#rotate{display:none;position:fixed;inset:0;background:#111;color:#fff;z-index:9;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:20px}#creator{position:fixed;inset:0;z-index:8;background:#111d;display:flex;align-items:center;justify-content:center;color:#fff}#card{width:min(560px,86vw);background:#1e2935;border:2px solid #ffffffaa;border-radius:14px;padding:22px;box-sizing:border-box;text-align:center}#card h1{font-size:28px;margin:0 0 18px}#nameInput{width:82%;font-size:20px;padding:10px;border-radius:8px;border:0;text-align:center}.classes{display:flex;gap:10px;justify-content:center;margin:18px 0}.classBtn{font-size:18px;padding:12px 20px;border-radius:9px;border:2px solid #ffffff55;background:#2b3540;color:#fff}.classBtn.sel{border-color:#fff4b0;background:#355f82}#startBtn{font-size:20px;font-weight:bold;padding:12px 38px;border:0;border-radius:9px;background:#c8a45b;color:#171b20}#hint{font-size:14px;color:#ccc;margin:12px 0 0}@media(orientation:portrait){#rotate{display:flex}}</style></head><body><div id="wrap"><canvas id="game"></canvas></div><div id="creator"><div id="card"><h1>建立你的江湖角色</h1><input id="nameInput" maxlength="8" placeholder="輸入角色名稱"><div class="classes"><button class="classBtn sel" data-job="劍俠">劍俠</button><button class="classBtn" data-job="遊俠">遊俠</button><button class="classBtn" data-job="武者">武者</button></div><button id="startBtn">踏入江湖</button><div id="hint">劍俠：劍　｜　遊俠：弓　｜　武者：長槍</div></div></div><div id="rotate">請將 iPhone 轉成橫向遊玩</div><script>
 const c=document.getElementById('game'),ctx=c.getContext('2d'),W=1280,H=720;c.width=W;c.height=H;function fit(){let s=Math.min(innerWidth/W,innerHeight/H);c.style.width=W*s+'px';c.style.height=H*s+'px'}addEventListener('resize',fit);fit();
 let playerName='無名俠客',playerJob='劍俠';document.querySelectorAll('.classBtn').forEach(b=>b.onclick=()=>{playerJob=b.dataset.job;document.querySelectorAll('.classBtn').forEach(x=>x.classList.toggle('sel',x===b))});document.getElementById('startBtn').onclick=()=>{let n=document.getElementById('nameInput').value.trim();playerName=n||'無名俠客';inventory=[jobProfile().starter];equipped=inventory[0];martialTab=jobProfile().tab;bagNotice='';document.getElementById('creator').style.display='none'};
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),dist=(a,b)=>Math.hypot(a.x-b.x,a.y-b.y);let score=0,win=false,gameOver=false,loot=null,skillCD=0,invuln=0,combo=0,comboT=0,shake=0,flash=0,bossSpawned=false,bossDefeated=false,comboPop=0,wave=1,mapId=1;let fx=[],projectiles=[];let bagOpen=false,statsOpen=false,martialOpen=false,inventory=[],equipped=null;let level=1,exp=0;let stats={strength:10,vitality:10,agility:10,inner:10},statPoints=0,martialPoints=0;let swordPath={yude:1,peidao:0,qidi:0};let martialTab='sword',bowPath={basic:1,rapid:0},equippedBow='basic',rapidBurst=null;let spearPath={sweep:0},equippedSpear=null,sweepCD=0;let lightPath={water:0,wolf:0},equippedLight=null,wolfDash=null;function wolfEquipped(){return lightPath.wolf>0&&equippedLight==='wolf'}function learnWolf(){if(!lightPath.water||lightPath.wolf||martialPoints<=0)return;martialPoints--;lightPath.wolf=1}function toggleWolf(){if(lightPath.wolf){equippedLight=wolfEquipped()?null:'wolf';wolfDash=null}}function waterEquipped(){return lightPath.water>0&&equippedLight==='water'}function learnWater(){if(lightPath.water||martialPoints<=0)return;martialPoints--;lightPath.water=1}function toggleWater(){if(lightPath.water){equippedLight=waterEquipped()?null:'water';wolfDash=null}}let equippedSword='yude';function swordName(){return equippedSword==='peidao'?'培道劍法':'育德劍法'}function equipSword(k){if(jobProfile().tab!=='sword')return;if(k==='yude'||(k==='peidao'&&swordPath.peidao))equippedSword=k}function learnRapid(){if(jobProfile().tab!=='bow')return;if(bowPath.rapid||martialPoints<=0)return;martialPoints--;bowPath.rapid=1;equippedBow='rapid';addItem('獵戶短弓')}function activeSkillLabel(){if(weaponType()==='長槍')return spearPath.sweep&&equippedSpear==='sweep'?'橫掃':'槍道';return weaponType()==='弓'?(bowPath.rapid&&equippedBow==='rapid'?'連射':'弓術'):swordName().slice(0,2)+'\n劍法'}function learnSweep(){if(jobProfile().tab!=='spear')return;if(spearPath.sweep||martialPoints<=0)return;martialPoints--;spearPath.sweep=1;equippedSpear='sweep';addItem('木柄長槍')}function sweep(){if(jobProfile().tab!=='spear')return;if(weaponType()!=='長槍'||sweepCD>0||p.attT>0||p.dodgeT>0||win||gameOver||bagOpen||statsOpen||martialOpen)return;if(!spearPath.sweep||equippedSpear!=='sweep'){fx.push({x:p.x,y:p.y-80,t:.8,max:.8,message:'請先學習並裝備橫掃'});return}const face=p.face;sweepCD=3.8;p.attT=.58;spearmanSweep=true;spearmanAttackFace=face;combo=0;comboT=0;shake=Math.max(shake,10);fx.push({x:p.x,y:p.y,t:.55,max:.55,sweep:true,face});const dmg=32+atkBonus()+levelAtk()+spearStatAtk();let hits=0;enemies.forEach(e=>{let dx=(e.x-p.x)*face,dy=e.y-p.y;if(e.hp>0&&Math.hypot(dx,dy)<=260&&Math.abs(Math.atan2(dy,dx))<=1.3){damageEnemy(e,dmg,face*110,.65);hits++}});gainProficiency('sweep',hits)}function fireRapidArrow(b){projectiles.push({x:p.x+b.face*32,y:p.y-8,dx:b.face,dy:0,speed:720,life:1.05,dmg:b.dmg,rapidHits:rapidCastHits});fx.push({x:p.x+35*b.face,y:p.y-8,t:.18,max:.18,bow:true})}function rapidShot(){if(jobProfile().tab!=='bow'||weaponType()!=='弓')return;if(!bowPath.rapid||equippedBow!=='rapid'){fx.push({x:p.x,y:p.y-80,t:.8,max:.8,message:'請先學習並裝備連射'});return}if(p.attT>0)return;skillCD=4;p.attT=.56;rangerRapid=true;rangerShotFace=p.face;combo=0;comboT=0;rapidCastHits=new Set();rapidBurst={face:p.face,dmg:9+atkBonus()+levelAtk()+agiAtk(),left:2,t:.14};fireRapidArrow(rapidBurst)}function expNeed(){const table=[0,100,130,160,200,240,290,350,420,500];return table[level]||Math.round(500+(level-9)*90)}const itemData={'粗製鐵劍':{type:'劍',atk:3,color:'#ffd95a'},'青鋼長劍':{type:'劍',atk:8,color:'#6de0ff'},'獵戶短弓':{type:'弓',atk:2,color:'#9ee58f'},'木柄長槍':{type:'長槍',atk:4,color:'#e4c18a'}};function atkBonus(){return equipped?(itemData[equipped]?.atk||0):0}function levelAtk(){return (level-1)*2}function strAtk(){return Math.floor((stats.strength-10)*.6)}function agiAtk(){return Math.floor((stats.agility-10)*.6)}function spearStatAtk(){return Math.floor((stats.strength-10)*.35+(stats.agility-10)*.25)}function innerAtk(){return Math.floor((stats.inner-10)*.7)}const jobProfiles={
@@ -299,16 +299,30 @@ let rangerSpriteReady=false,rangerRapid=false,rangerShotFace=1;
 rangerSprite.onload=()=>{rangerSpriteReady=true};
 rangerSprite.src='assets/ranger-a433.webp';
 
+const classDodgeFrames=[[[0,0,95,144,42,143],[190,0,98,145,47,144],[380,0,98,148,46,147],[0,170,93,151,43,150],[190,170,90,154,43,153],[380,170,95,163,41,162]],[[0,340,124,144,52,143],[190,340,140,133,64,132],[380,340,157,115,62,114],[0,510,135,138,58,137],[190,510,133,149,60,148],[380,510,128,164,53,163]]];
+const classDodgeSprite=new Image();
+let classDodgeReady=false;
+classDodgeSprite.onload=()=>{classDodgeReady=true};
+classDodgeSprite.src='assets/ranger-spearman-dodge-a434.webp';
+
 function drawRanger(){
   const dodging=p.dodgeT>0||!!wolfDash;
   const shooting=!dodging&&p.attT>0;
   const moving=Math.hypot(joy.dx,joy.dy)>.08;
   let facing=p.face,lift=0;
   let frames=rangerFrames[0],frame=Math.floor(last/160)%3;
+  let sprite=rangerSprite;
   if(dodging){
     facing=swordDodgeFace;
-    frame=3+Math.min(2,Math.floor(clamp(1-p.dodgeT/.32,0,1)*3));
-    lift=frame===4?2:0;
+    const progress=clamp(1-p.dodgeT/.32,0,1);
+    if(classDodgeReady){
+      frames=classDodgeFrames[0];
+      sprite=classDodgeSprite;
+      frame=Math.min(frames.length-1,Math.floor(progress*frames.length));
+    }else{
+      frame=3+Math.min(2,Math.floor(progress*3));
+    }
+    lift=classDodgeReady?(frame===2?3:0):(frame===4?2:0);
   }else if(shooting){
     facing=rangerShotFace;
     frames=rangerFrames[1];
@@ -326,7 +340,7 @@ function drawRanger(){
   ctx.translate(p.x,p.y+33);ctx.scale(facing,1);
   ctx.fillStyle='#26362e55';
   ctx.beginPath();ctx.ellipse(0,0,30,9,0,0,Math.PI*2);ctx.fill();
-  ctx.drawImage(rangerSprite,sx,sy,w,h,-root/2,-sole/2-lift,w/2,h/2);
+  ctx.drawImage(sprite,sx,sy,w,h,-root/2,-sole/2-lift,w/2,h/2);
   ctx.restore();
 }
 
@@ -341,9 +355,17 @@ function drawSpearman(){
   const moving=Math.hypot(joy.dx,joy.dy)>.08;
   let frames=spearmanFrames[0],frame=Math.floor(last/160)%3;
   let face=p.face;
+  let sprite=spearmanSprite;
   if(dodging){
     face=swordDodgeFace;
-    frame=3+Math.min(2,Math.floor(clamp(1-p.dodgeT/.32,0,1)*3));
+    const progress=clamp(1-p.dodgeT/.32,0,1);
+    if(classDodgeReady){
+      frames=classDodgeFrames[1];
+      sprite=classDodgeSprite;
+      frame=Math.min(frames.length-1,Math.floor(progress*frames.length));
+    }else{
+      frame=3+Math.min(2,Math.floor(progress*3));
+    }
   }else if(p.attT>0){
     face=spearmanAttackFace;
     const duration=spearmanSweep?.58:.48;
@@ -359,7 +381,7 @@ function drawSpearman(){
   ctx.translate(p.x,p.y+33);ctx.scale(face,1);
   ctx.fillStyle='#26362e55';
   ctx.beginPath();ctx.ellipse(0,0,30,9,0,0,Math.PI*2);ctx.fill();
-  ctx.drawImage(spearmanSprite,sx,sy,w,h,-root/2,-sole/2-lift,w/2,h/2);
+  ctx.drawImage(sprite,sx,sy,w,h,-root/2,-sole/2-lift,w/2,h/2);
   ctx.restore();
 }
 

@@ -288,7 +288,7 @@ function hurtPlayer(damage,immunity){
   playerHurtFace=p.face;
 }
 function bossHeavy(e){e.artStrike=.25;fx.push({x:e.x,y:e.y,t:.32,max:.32,heavy:true});shake=12;flash=.09;if(dist(p,e)<150&&invuln<=0){hurtPlayer(28,.55);p.x=clamp(p.x+(p.x>=e.x?1:-1)*80,70,1210)}else if(dist(p,e)<150&&invuln>0){fx.push({x:p.x,y:p.y,t:.45,max:.45,dodged:true})}}function startCharge(e){let dx=p.x-e.x,dy=p.y-e.y,d=Math.hypot(dx,dy)||1;e.chargeDX=dx/d;e.chargeDY=dy/d;e.chargeWarn=.72;e.chargeHit=false;e.cd=2.1}function beginCharge(e){e.chargeT=.48;fx.push({x:e.x,y:e.y,t:.48,max:.48,charge:true,dx:e.chargeDX,dy:e.chargeDY})}
-let last=performance.now();function loop(now){let dt=Math.min(.033,(now-last)/1000);last=now;if(gameHome.playing){update(dt);draw()}requestAnimationFrame(loop)}requestAnimationFrame(loop);
+let last;function loop(now){const dt=Math.min(.033,(now-(last??now))/1000);last=now;update(dt);draw();requestAnimationFrame(loop)}
 function update(dt){if(inventory.length)normalizeEquippedWeapon();if(win||gameOver||bagOpen||statsOpen||martialOpen)return;p.attT=Math.max(0,p.attT-dt);p.dodgeT=Math.max(0,p.dodgeT-dt);playerHurtT=Math.max(0,playerHurtT-dt);invuln=Math.max(0,invuln-dt);skillCD=Math.max(0,skillCD-dt);sweepCD=Math.max(0,sweepCD-dt);comboT=Math.max(0,comboT-dt);comboPop=Math.max(0,comboPop-dt);shake=Math.max(0,shake-28*dt);flash=Math.max(0,flash-dt);if(comboT===0)combo=0;fx.forEach(f=>f.t-=dt);fx=fx.filter(f=>f.t>0);let dx=joy.dx,dy=joy.dy,m=Math.hypot(dx,dy);if(m>1){dx/=m;dy/=m}if(Math.abs(dx)>.08)p.face=Math.sign(dx);const classDodging=!!classDodgeMove;
   if(classDodgeMove)advanceClassDodgeMove();
   const wolfMoving=!!wolfDash;if(wolfDash){if(!wolfEquipped())wolfDash=null;else{const step=Math.min(wolfDash.remaining,wolfDash.speed*dt),before=p.x,face=wolfDash.face;p.x=clamp(p.x+face*step,70,1210);wolfDash.remaining-=step;fx.push({x:(before+p.x)/2,y:p.y,t:.3,max:.3,wolfTrail:true,face});if(wolfDash.remaining<=.00001||p.x===70||p.x===1210)wolfDash=null}}if(p.attT<=0&&!wolfMoving&&!classDodging){const moveSpeed=p.speed*(waterEquipped()?1.12:1);p.x=clamp(p.x+dx*moveSpeed*dt,70,1210);p.y=clamp(p.y+dy*moveSpeed*.72*dt,185,555)}keepOnRoad(p,33,70,1210);if(rapidBurst){rapidBurst.t-=dt;while(rapidBurst&&rapidBurst.t<=0){if(p.dodgeT>0||weaponType()!=='弓'){rapidBurst=null;break}fireRapidArrow(rapidBurst);rapidBurst.left--;rapidBurst.t+=.14;if(rapidBurst.left===0)rapidBurst=null}}projectiles.forEach(a=>{a.x+=a.dx*a.speed*dt;a.y+=a.dy*a.speed*dt;a.life-=dt;if(a.life<=0)return;
@@ -1239,6 +1239,7 @@ drawCombatHUD();if(win){ctx.fillStyle='#000b';ctx.fillRect(0,0,W,H);ctx.fillStyl
 
 // A4-58 game state adapter: the original drawing, combat and martial systems remain unchanged.
 window.jianghuGame = {
+ startRendering() { fit(); requestAnimationFrame(loop); },
  snapshot() { return {
   playerName,playerJob,player:{x:p.x,y:p.y,hp:p.hp,max:p.max,face:p.face,speed:p.speed},
   level,exp,stats,statPoints,martialPoints,inventory,equipped,

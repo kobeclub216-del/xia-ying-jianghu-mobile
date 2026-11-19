@@ -150,7 +150,7 @@ const gameHome = (() => {
     creator.hidden = true;
     byId('wrap').hidden = false;
     playing = true;
-    requestAnimationFrame(() => { if (typeof fit === 'function') fit(); });
+    game.startRendering();
   }
 
   continueButton.onclick = () => {
@@ -212,7 +212,6 @@ const gameHome = (() => {
   refreshHome();
 
   return {
-    get playing() { return playing; },
     startNew() {
       if (playing || creator.hidden) return;
       const saved = persist();

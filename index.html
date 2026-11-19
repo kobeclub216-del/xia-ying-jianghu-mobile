@@ -1244,13 +1244,26 @@ window.jianghuGame = {
   level,exp,stats,statPoints,martialPoints,inventory,equipped,
   swordPath,bowPath,spearPath,lightPath,martialGrowth,
   equippedSword,equippedBow,equippedSpear,equippedLight,martialTab,
-  mapId,wave,score,enemies,loot,win,gameOver,bossSpawned,bossDefeated
+  mapId,stage,score,enemies,loot,win,gameOver,bossSpawned,bossDefeated
  }; },
+ savedStage(save) {
+  if (Number.isInteger(save.stage) && chapterStages[save.stage - 1]) return save.stage;
+  if (save.stage !== undefined) return null;
+  // Earlier integration saves did not include a stage number.
+  if (save.mapId === 2 || save.bossSpawned || save.enemies.some(enemy => enemy.boss)) {
+   return chapterStages.length;
+  }
+  const archers = save.enemies.filter(enemy => enemy.archer).length;
+  const index = chapterStages.findIndex(entry =>
+   entry.archers === archers && entry.melee + entry.archers === save.enemies.length
+  );
+  return index < 0 ? null : index + 1;
+ },
  restore(save) {
   ({playerName,playerJob,level,exp,stats,statPoints,martialPoints,
    inventory,equipped,swordPath,bowPath,spearPath,lightPath,
    equippedSword,equippedBow,equippedSpear,equippedLight,martialTab,
-   mapId,wave,score,enemies,loot,win,gameOver,bossSpawned,bossDefeated}=save);
+   mapId,stage,score,enemies,loot,win,gameOver,bossSpawned,bossDefeated}=save);
   Object.assign(p,save.player);
   for(const key of Object.keys(martialGrowth)) {
    if(save.martialGrowth?.[key])Object.assign(martialGrowth[key],save.martialGrowth[key]);

@@ -54,3 +54,30 @@
   background: #281d20; color: #ffe8b4; text-align: center; pointer-events: none;
 }
 @media (orientation: portrait) { #homeDialog { z-index: 10; } }
+#home {
+  box-sizing: border-box;
+  padding: env(safe-area-inset-top) env(safe-area-inset-right)
+    env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+.home-scene {
+  max-width: 100%;
+  width: min(100vw, calc((100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom)) * 16 / 9));
+}
+#creator:not([hidden]) {
+  box-sizing: border-box;
+  height: var(--creator-height, 100%);
+  padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right))
+    max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left));
+}
+#creator #card {
+  max-height: 100%;
+  overflow-y: auto;
+  touch-action: pan-y;
+}
+@media (max-height: 430px) and (orientation: landscape) {
+  #creator #card { padding: 10px 16px; }
+  #card h1 { margin-bottom: 8px; font-size: 22px; }
+  #nameInput, .classBtn, #startBtn { padding-block: 6px; }
+  #card .classes { margin-block: 8px; }
+  #hint { margin-top: 6px; }
+}

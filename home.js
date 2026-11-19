@@ -34,13 +34,18 @@ const gameHome = (() => {
         ![1, 2].includes(progress.mapId) ||
         !['x', 'y', 'hp', 'max', 'face'].every(key => Number.isFinite(progress.player?.[key])) ||
         !Array.isArray(progress.inventory) || !Array.isArray(progress.enemies) ||
+        !progress.enemies.every(enemy => ['x', 'y', 'hp', 'max'].every(
+          key => Number.isFinite(enemy?.[key])
+        )) ||
+        !['strength', 'vitality', 'agility', 'inner'].every(key => Number.isFinite(progress.stats?.[key])) ||
         !['stats', 'swordPath', 'bowPath', 'spearPath', 'lightPath', 'martialGrowth'].every(
           key => progress[key] && typeof progress[key] === 'object'
         ) ||
-        !['level', 'exp', 'statPoints', 'martialPoints', 'wave', 'score'].every(
+        !['level', 'exp', 'statPoints', 'martialPoints', 'score'].every(
           key => Number.isFinite(progress[key])
         )) return null;
-    return progress;
+    const stage = game.savedStage(progress);
+    return stage === null ? null : {...progress, stage};
   }
 
   function warn(message) {
@@ -130,7 +135,17 @@ const gameHome = (() => {
     } catch { /* Browsers may block audio in some contexts. */ }
   }
 
+  function fitCreator() {
+    if (!creator.hidden) creator.style.setProperty(
+      '--creator-height', (window.visualViewport?.height ?? window.innerHeight) + 'px'
+    );
+  }
+
+  window.visualViewport?.addEventListener('resize', fitCreator);
+  window.addEventListener('resize', fitCreator);
+
   function enterGame() {
+    if (creator.contains(document.activeElement)) document.activeElement.blur();
     home.hidden = true;
     creator.hidden = true;
     byId('wrap').hidden = false;
@@ -153,7 +168,7 @@ const gameHome = (() => {
       storedSave = raw;
       home.hidden = true;
       creator.hidden = false;
-      byId('nameInput').focus({preventScroll: true});
+      fitCreator();
     };
     if (raw) {
       openDialog('初入江湖', {

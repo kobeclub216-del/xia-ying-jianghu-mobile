@@ -1,0 +1,56 @@
+#home[hidden], #creator[hidden], #wrap[hidden], #cancelCreator[hidden] { display: none; }
+#home {
+  position: fixed; inset: 0; z-index: 7; display: grid; place-items: center;
+  background: #151216; color: #ffe8b4;
+}
+.home-scene {
+  position: relative; container-type: inline-size; width: min(100vw, 177.778vh);
+  width: min(100vw, 177.778dvh); aspect-ratio: 16 / 9;
+  background: #45323a url(assets/home/sunset-town.webp) center / 100% 100% no-repeat;
+}
+.home-menu {
+  position: absolute; inset: 49.3% 2.6% 14.5% 77.1%; display: grid;
+  grid-template-rows: repeat(4, 1fr); gap: .55cqw;
+}
+.home-menu button {
+  display: grid; place-content: center; grid-auto-flow: column; align-items: center; gap: .9cqw;
+  min-width: 0; min-height: 0; padding: 0; white-space: nowrap; touch-action: manipulation;
+  color: #ffe5a8; background: linear-gradient(#423027, #21171b 56%, #392822);
+  font: 700 clamp(12px, 2.15cqw, 34px) "Songti TC", "Noto Serif CJK TC", serif;
+  border: 1px solid #ebc887; border-radius: 1.25cqw .5cqw; cursor: pointer;
+  box-shadow: 0 0 0 1px #3e2b25, inset 0 0 0 2px #745336, 0 2px 5px #1c1417aa;
+}
+.home-menu button:first-child:not(:disabled), .home-menu button:focus-visible,
+.home-menu button:active {
+  outline: 1px solid #ffdd96; box-shadow: inset 0 0 10px #dda74888, 0 0 10px #ffca6a;
+}
+.home-menu button:disabled { color: #d1ba95; cursor: default; }
+.home-version {
+  position: absolute; bottom: 0; left: 0; padding: .5cqw 1cqw;
+  background: #1d1918; font-size: clamp(8px, 1.4cqw, 20px);
+}
+.home-sr {
+  position: absolute; width: 1px; height: 1px; overflow: hidden;
+  clip-path: inset(50%); white-space: nowrap;
+}
+#homeDialog {
+  box-sizing: border-box; width: min(400px, 86vw); max-height: 88vh;
+  color: #ffe8b4; background: #281d20; border: 2px solid #ba9058;
+  border-radius: 8px; padding: clamp(12px, 4vh, 24px); overflow: auto; touch-action: pan-y;
+}
+#homeDialog::backdrop { background: #130d13ad; }
+#homeDialog h2 { margin: 0 0 12px; font-size: 23px; }
+#homeDialog p { margin: 0 0 14px; }
+#homeDialog label { display: flex; align-items: center; gap: 12px; margin: 12px 0; }
+#homeDialog input { accent-color: #d1ab67; touch-action: manipulation; }
+#homeDialog button, #cancelCreator {
+  min-height: 36px; padding: 5px 14px; border: 1px solid #ba9058;
+  border-radius: 5px; background: #483229; color: #ffe8b4; font-size: 16px;
+}
+#homeDialog form { display: flex; justify-content: flex-end; gap: 8px; }
+#saveWarning {
+  position: fixed; bottom: env(safe-area-inset-bottom, 0px); left: 50%;
+  transform: translateX(-50%); z-index: 8; margin: 0; padding: 6px 10px;
+  background: #281d20; color: #ffe8b4; text-align: center; pointer-events: none;
+}
+@media (orientation: portrait) { #homeDialog { z-index: 10; } }

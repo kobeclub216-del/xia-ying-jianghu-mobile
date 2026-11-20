@@ -1,0 +1,15 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>A4-59-C 角色儲存自動測試</title><style>body{font-family:-apple-system,"PingFang TC",sans-serif;max-width:680px;margin:auto;padding:24px;background:#e8f1ee;color:#233}h1{font-size:22px}.item{background:white;border:1px solid #9cb4a9;border-radius:8px;padding:12px;margin:9px 0}.ok{border-left:6px solid #298451}.bad{border-left:6px solid #ba433c}button{font:inherit;padding:12px;background:#253d42;color:white;border:0;border-radius:7px}</style></head><body><h1>俠影江湖｜A4-59-C 自動測試</h1><p>本頁使用獨立的記憶體測試資料，不會刪除或修改你的任何遊戲存檔。</p><button id="run">重新執行測試</button><p id="summary" role="status"></p><div id="results"></div><script src="character-slots.js"></script><script>
+function memoryStorage(){const map=new Map();return{getItem:k=>map.has(k)?map.get(k):null,setItem:(k,v)=>map.set(k,String(v)),removeItem:k=>map.delete(k)}}
+function run(){const tests=[];function test(name,fn){try{fn();tests.push({name,ok:true})}catch(e){tests.push({name,ok:false,error:e.message})}}function assert(v,msg){if(!v)throw Error(msg||'驗證失敗')}function throws(fn){let raised=false;try{fn()}catch{raised=true}assert(raised,'預期操作應被阻止')}
+const storage=memoryStorage(),a=JianghuCharacterSlots.createStore(storage);const base=[{name:'行天',job:'劍俠',sex:'男'},{name:'雲霜',job:'遊俠',sex:'女'},{name:'青岳',job:'武者',sex:'男'}];
+test('建立三個獨立角色',()=>{base.forEach((c,i)=>a.create(i,c));assert(a.read().slots.every(Boolean))});
+test('重複姓名不能建立',()=>{throws(()=>a.create(2,{...base[0]}));assert(a.read().slots[2].name==='青岳')});
+test('重新開啟儲存管理器仍保留三個角色',()=>{const b=JianghuCharacterSlots.createStore(storage);assert(b.read().slots.map(x=>x.name).join(',')==='行天,雲霜,青岳')});
+test('刪除一個角色不影響其他兩個',()=>{a.remove(1,'雲霜');const s=a.read().slots;assert(s[1]===null&&s[0].name==='行天'&&s[2].name==='青岳')});
+test('錯誤姓名不能刪除',()=>{throws(()=>a.remove(0,'錯誤'));assert(a.read().slots[0].name==='行天')});
+test('重新建立空白欄位並拒絕重名',()=>{throws(()=>a.create(1,base[0]));a.create(1,base[1]);assert(a.read().slots[1].name==='雲霜')});
+test('正式 A4-58 舊存檔不被更動',()=>{storage.setItem(JianghuCharacterSlots.LEGACY_KEY,'legacy-test-data');a.select(1);assert(storage.getItem(JianghuCharacterSlots.LEGACY_KEY)==='legacy-test-data')});
+test('不同分頁的舊狀態不能覆寫新狀態',()=>{const b=JianghuCharacterSlots.createStore(storage);b.read();a.select(2);throws(()=>b.select(0));assert(a.read().lastSelected===2)});
+const ok=tests.filter(t=>t.ok).length;document.getElementById('summary').textContent='程式邏輯測試：'+ok+' / '+tests.length+' 項通過';document.getElementById('results').replaceChildren(...tests.map(t=>{const e=document.createElement('div');e.className='item '+(t.ok?'ok':'bad');e.textContent=(t.ok?'通過｜':'失敗｜')+t.name+(t.error?'：'+t.error:'');return e}));}
+document.getElementById('run').onclick=run;run();
+</script></body></html>

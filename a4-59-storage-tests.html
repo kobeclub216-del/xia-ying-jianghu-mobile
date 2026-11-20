@@ -3,7 +3,7 @@ function memoryStorage(){const map=new Map();return{getItem:k=>map.has(k)?map.ge
 function run(){const tests=[];function test(name,fn){try{fn();tests.push({name,ok:true})}catch(e){tests.push({name,ok:false,error:e.message})}}function assert(v,msg){if(!v)throw Error(msg||'驗證失敗')}function throws(fn){let raised=false;try{fn()}catch{raised=true}assert(raised,'預期操作應被阻止')}
 const storage=memoryStorage(),a=JianghuCharacterSlots.createStore(storage);const base=[{name:'行天',job:'劍俠',sex:'男'},{name:'雲霜',job:'遊俠',sex:'女'},{name:'青岳',job:'武者',sex:'男'}];
 test('建立三個獨立角色',()=>{base.forEach((c,i)=>a.create(i,c));assert(a.read().slots.every(Boolean))});
-test('重複姓名不能建立',()=>{throws(()=>a.create(2,{...base[0]}));assert(a.read().slots[2].name==='青岳')});
+test('重複姓名不能建立',()=>{a.remove(2,'青岳');throws(()=>a.create(2,{...base[0]}));assert(a.read().slots[2]===null);a.create(2,base[2])});
 test('重新開啟儲存管理器仍保留三個角色',()=>{const b=JianghuCharacterSlots.createStore(storage);assert(b.read().slots.map(x=>x.name).join(',')==='行天,雲霜,青岳')});
 test('刪除一個角色不影響其他兩個',()=>{a.remove(1,'雲霜');const s=a.read().slots;assert(s[1]===null&&s[0].name==='行天'&&s[2].name==='青岳')});
 test('錯誤姓名不能刪除',()=>{throws(()=>a.remove(0,'錯誤'));assert(a.read().slots[0].name==='行天')});

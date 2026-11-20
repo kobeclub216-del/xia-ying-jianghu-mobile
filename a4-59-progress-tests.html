@@ -1,0 +1,16 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>俠影江湖 A4-59-D 獨立進度測試</title><style>body{background:#dbeaf1;color:#252b33;font:16px -apple-system,"PingFang TC",sans-serif;margin:0;padding:18px}main{max-width:640px;margin:auto;padding:18px;border:5px ridge #b88c46;border-radius:10px;background:#f8efd9}button{font:inherit;background:#29272d;color:#f7dba2;border:2px solid #b88c46;padding:12px;border-radius:8px}li{margin:8px 0;padding:8px;background:#fff9}.ok{color:#17643b}.bad{color:#a32424}</style></head><body><main><h2>俠影江湖 A4-59-D</h2><p>三角色獨立遊戲進度安全測試</p><p>此頁只使用記憶體模擬資料，不會更動正式版存檔。</p><button id="run">重新測試</button><p id="summary" role="status"></p><ol id="results"></ol></main><script src="character-progress.js"></script><script>
+function memory(){const m=new Map();return{getItem:k=>m.has(k)?m.get(k):null,setItem:(k,v)=>m.set(k,String(v)),removeItem:k=>m.delete(k)}}
+function run(){const results=[];function test(name,fn){try{fn();results.push({name,ok:true})}catch(e){results.push({name,ok:false,error:e.message})}}function check(v){if(!v)throw Error('資料不符合預期')}function fails(fn){let ok=false;try{fn()}catch{ok=true}check(ok)}
+const storage=memory(),p=JianghuCharacterProgress.createProgressStore(storage,x=>!!x&&typeof x.playerName==='string'&&Number.isInteger(x.level)&&x.level>0),ids=['slot-a','slot-b','slot-c'];
+test('三位角色進度獨立寫入',()=>ids.forEach((id,i)=>p.save(id,{playerName:['甲','乙','丙'][i],level:i+1})));
+test('三個欄位進度互不混用',()=>check(ids.every((id,i)=>p.load(id).level===i+1)));
+test('重新建立管理器後可讀取',()=>check(JianghuCharacterProgress.createProgressStore(storage,x=>!!x&&typeof x.playerName==='string'&&Number.isInteger(x.level)&&x.level>0).load(ids[1]).playerName==='乙'));
+test('不允許寫入無效進度',()=>fails(()=>p.save(ids[0],{level:'wrong'})));
+test('不允許非法角色 ID',()=>fails(()=>p.save('../legacy',{playerName:'甲',level:1})));
+test('跨分頁舊版進度不得覆蓋新版',()=>{const old=p.getRaw(ids[0]);p.save(ids[0],{playerName:'甲',level:10});fails(()=>p.save(ids[0],{playerName:'甲',level:2},old));check(p.load(ids[0]).level===10)});
+test('刪除角色二的進度不影響角色一與三',()=>{p.remove(ids[1]);check(p.load(ids[1])===null&&p.load(ids[0]).level===10&&p.load(ids[2]).level===3)});
+test('損毀資料不會被當成新角色',()=>{storage.setItem(p.key(ids[1]),'{bad');fails(()=>p.load(ids[1]));check(p.getRaw(ids[1])==='{bad')});
+test('舊版 A4-58 存檔保持不變',()=>{storage.setItem(JianghuCharacterProgress.LEGACY,'legacy-save');p.save(ids[2],{playerName:'丙',level:4});check(p.legacyRaw()==='legacy-save')});
+const ok=results.filter(x=>x.ok).length;document.getElementById('summary').textContent=ok+'/'+results.length+' 項通過';document.getElementById('results').replaceChildren(...results.map(x=>{const e=document.createElement('li');e.className=x.ok?'ok':'bad';e.textContent=(x.ok?'通過：':'失敗：')+x.name+(x.error?'（'+x.error+'）':'');return e}));}
+document.getElementById('run').onclick=run;run();
+</script></body></html>

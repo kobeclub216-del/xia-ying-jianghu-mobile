@@ -55,6 +55,29 @@ const style=document.createElement('style');style.textContent='#a459Panel{positi
  #a459Notice{min-height:0;margin:0;font-size:12px}
  #a459Back{min-height:28px;padding:3px 16px;margin:0;font-size:12px}
 }
+
+/* A4-59-H2: refined layered Jianghu scenery, transparent class portraits. */
+#a459Slots canvas.a459Portrait,#a459CreatorPreview canvas{background:transparent!important;border:0!important;box-shadow:none!important}
+#a459Panel{background:radial-gradient(ellipse at 48% 22%,#e9f0df 0%,#b9d5ce 45%,#739b9d 100%);color:#302e29}
+#a459Panel .a459-landscape{background:linear-gradient(180deg,transparent 0 42%,#b8d4cba8 55%,#608e8a44 100%)}
+#a459Panel .mountain{opacity:.27;filter:blur(2px);background:linear-gradient(145deg,#f4f3e3 0%,#a5c3bd 42%,#507e7e 100%)}
+#a459Panel .mountain.far{opacity:.18;filter:blur(5px)}
+#a459Panel .mountain.near{opacity:.25;filter:blur(3px)}
+#a459Panel .river{opacity:.42;filter:blur(7px);background:linear-gradient(95deg,#4f939f,#e6f6e9,#5597a4)}
+#a459Panel .bamboo{opacity:.16;filter:blur(3px)}
+#a459Panel .a459-content{background:linear-gradient(90deg,#f5edcf00,#f5edcf18 20%,#f5edcf18 80%,#f5edcf00)}
+#a459Panel h2{background:linear-gradient(180deg,#4e4238,#211e20);border:2px solid #b7955c;border-radius:4px;box-shadow:inset 0 0 0 2px #342a26,0 3px 12px #1b292a44;color:#f3ddb1}
+#a459Slots article{background:linear-gradient(155deg,#fff7e6f5,#e7d6b7ed 68%,#c8b394e8);border:2px solid #a78552;outline:1px solid #f7e9ca;outline-offset:-5px;box-shadow:inset 0 0 0 3px #f3e4c699,0 4px 12px #29424440;border-radius:6px}
+#a459Slots article[data-job="劍俠"]{border-top:3px solid #7d9db0}
+#a459Slots article[data-job="遊俠"]{border-top:3px solid #879c70}
+#a459Slots article[data-job="武者"]{border-top:3px solid #ac8466}
+#a459Slots article h3{color:#302a25;text-shadow:0 1px #fff9}
+#a459Slots article button,#a459Back{background:linear-gradient(#574435,#302722);border:1px solid #b4935d;border-radius:4px;color:#f6e3b7;box-shadow:inset 0 1px #8d7453}
+#creator #card{border:2px solid #ba9a63;outline:2px solid #4b3a2d;outline-offset:-6px;background:linear-gradient(145deg,#42423d,#252a2c)}
+@media(orientation:landscape) and (max-height:520px){
+ #a459Slots article{min-height:0;border-width:2px;outline-offset:-4px}
+ #a459Panel h2{box-shadow:0 2px 5px #1b292a44}
+}
 `;document.head.append(style);
 /* A4-59-H: actual class sprite previews, using existing original sprite sheets. */
 const a459Art={

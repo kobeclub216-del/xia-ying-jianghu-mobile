@@ -37,6 +37,24 @@ const style=document.createElement('style');style.textContent='#a459Panel{positi
 #a459Slots article[data-job="武者"] .a459-emblem{border-color:#b38964}
 #a459Slots article button{min-width:95px}
 @media(max-width:650px){#a459Panel{padding:3vh 3vw}#a459Panel h2{font-size:20px;padding:7px 12px}#a459Slots{gap:5px}#a459Slots article{min-width:0;width:29vw;min-height:175px}#a459Slots article h3{font-size:16px}#a459Slots article p{font-size:12px}#a459Slots article .a459-emblem{width:45px;height:45px;font-size:26px}#a459Slots article button{min-width:0;font-size:12px}}
+
+/* A4-59-H1: iPhone landscape single-screen selection, no vertical scroll. */
+@media (orientation:landscape) and (max-height:520px){
+ #a459Panel{height:100dvh;max-height:100dvh;overflow:hidden;padding:max(4px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(4px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));display:flex;align-items:center;justify-content:center}
+ #a459Panel[hidden]{display:none}
+ #a459Panel .a459-content{width:100%;height:100%;max-width:1000px;display:grid;grid-template-rows:auto auto minmax(0,1fr) auto auto;align-items:center;justify-items:center;gap:2px}
+ #a459Panel h2{font-size:clamp(15px,3.2vh,22px);padding:3px 15px;margin:0;border-width:2px;box-shadow:0 2px 0 #624a32}
+ #a459Panel .a459-subtitle{font-size:clamp(10px,2.3vh,13px);margin:0}
+ #a459Slots{width:100%;height:100%;min-height:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(4px,1.4vw,12px);margin:0;align-items:stretch}
+ #a459Slots article{box-sizing:border-box;width:100%;height:100%;min-height:0;min-width:0;padding:3px 5px;border-width:3px;border-radius:7px;gap:0;justify-content:space-evenly;overflow:hidden}
+ #a459Slots article .a459Portrait{width:auto;height:clamp(40px,19vh,82px);max-width:100%;aspect-ratio:5/7}
+ #a459Slots article .a459-emblem{width:clamp(28px,10vh,43px);height:clamp(28px,10vh,43px);font-size:22px}
+ #a459Slots article h3{font-size:clamp(12px,3vh,17px);margin:0;line-height:1.15}
+ #a459Slots article p{font-size:clamp(10px,2.3vh,13px);margin:0;line-height:1.15}
+ #a459Slots article button{box-sizing:border-box;min-width:0;width:min(100%,150px);min-height:26px;margin:1px;padding:2px 4px;font-size:clamp(11px,2.6vh,14px);line-height:1.2}
+ #a459Notice{min-height:0;margin:0;font-size:12px}
+ #a459Back{min-height:28px;padding:3px 16px;margin:0;font-size:12px}
+}
 `;document.head.append(style);
 /* A4-59-H: actual class sprite previews, using existing original sprite sheets. */
 const a459Art={

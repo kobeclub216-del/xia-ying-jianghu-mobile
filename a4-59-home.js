@@ -15,7 +15,7 @@ byId('homeDialog').addEventListener('close',()=>{if(byId('homeDialog').returnVal
 const panel=document.createElement('section');panel.id='a459Panel';panel.hidden=true;panel.innerHTML='<div class="a459-landscape" aria-hidden="true"><i class="mountain far"></i><i class="mountain near"></i><i class="river"></i><i class="bamboo left"></i><i class="bamboo right"></i></div><div class="a459-content"><h2>選擇你的江湖身分</h2><p class="a459-subtitle">一人一段江湖路 · 三個角色各自保留進度</p><div id="a459Slots"></div><p id="a459Notice" role="status"></p><button id="a459Back">返回首頁</button></div>';
 document.body.append(panel);
 const returnButton=document.createElement('button');returnButton.id='a459Return';returnButton.textContent='返回角色選擇';returnButton.hidden=true;returnButton.setAttribute('aria-label','儲存進度並返回角色選擇');document.body.append(returnButton);
-const style=document.createElement('style');style.textContent='#a459Panel{position:fixed;z-index:900;inset:0;overflow:auto;padding:5vh 6vw;box-sizing:border-box;background:linear-gradient(160deg,#d9e8e6,#e4d2aa 65%,#91b7b4);color:#342d25;text-align:center}#a459Panel h2{font-size:clamp(22px,4vw,38px);color:#4b3927}#a459Slots{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:3vh auto}#a459Slots article{width:min(27vw,230px);min-width:145px;min-height:150px;padding:12px;border:4px ridge #b78d49;background:#f5e9ce;box-shadow:0 8px 24px #42351d44;border-radius:12px}#a459Slots h3{font-size:20px}#a459Panel button{padding:10px;margin:5px;background:#332e2a;color:#efd59b;border:2px solid #b78d49;border-radius:8px;font:inherit}#a459Panel button:disabled{opacity:.45}#a459Notice{color:#8b1f1f;min-height:1.5em}@media(max-width:600px){#a459Slots article{min-width:120px;width:26vw;padding:6px}#a459Panel button{font-size:13px;padding:7px}}';style.textContent+='#a459Return{position:fixed;z-index:850;top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));background:#2b2b31;color:#f2d79b;border:2px solid #b78d49;border-radius:8px;padding:8px 12px;font:14px -apple-system,sans-serif}';style.textContent+=`
+const style=document.createElement('style');style.textContent='#a459Panel{position:fixed;z-index:900;inset:0;overflow:auto;padding:5vh 6vw;box-sizing:border-box;background:linear-gradient(160deg,#d9e8e6,#e4d2aa 65%,#91b7b4);color:#342d25;text-align:center}#a459Panel h2{font-size:clamp(22px,4vw,38px);color:#4b3927}#a459Slots{display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin:3vh auto}#a459Slots article{width:min(27vw,230px);min-width:145px;min-height:150px;padding:12px;border:4px ridge #b78d49;background:#f5e9ce;box-shadow:0 8px 24px #42351d44;border-radius:12px}#a459Slots h3{font-size:20px}#a459Panel button{padding:10px;margin:5px;background:#332e2a;color:#efd59b;border:2px solid #b78d49;border-radius:8px;font:inherit}#a459Panel button:disabled{opacity:.45}#a459Notice{color:#8b1f1f;min-height:1.5em}@media(max-width:600px){#a459Slots article{min-width:120px;width:26vw;padding:6px}#a459Panel button{font-size:13px;padding:7px}}';style.textContent+='#a459Slots article .a459Portrait{width:72px;height:101px;image-rendering:pixelated;object-fit:contain}#a459CreatorPreview{display:flex;align-items:center;justify-content:center;gap:18px;margin:8px auto}#a459CreatorPreview canvas{width:75px;height:103px;image-rendering:pixelated}#a459JobDescription{color:#f0d8a1;font-size:15px}#creator #card{border:4px ridge #b98e4b;background:linear-gradient(145deg,#343438,#1e292d);box-shadow:0 10px 35px #0008}#creator #card h1{color:#f2d59a}#creator .classBtn.sel{border-color:#d4a758;box-shadow:0 0 0 2px #d4a75855}';style.textContent+='#a459Return{position:fixed;z-index:850;top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));background:#2b2b31;color:#f2d79b;border:2px solid #b78d49;border-radius:8px;padding:8px 12px;font:14px -apple-system,sans-serif}';style.textContent+=`
 #a459Panel{background:linear-gradient(#8ec6df 0%,#d9edf0 37%,#b8cdb6 55%,#d7c9a0 100%);isolation:isolate}
 #a459Panel .a459-content{position:relative;z-index:2;max-width:1120px;margin:auto}
 #a459Panel h2{display:inline-block;margin:0 auto 12px;padding:10px 35px;border:4px double #d7b46b;background:#29282a;color:#f4d99c;box-shadow:0 6px 0 #624a32,0 10px 22px #253b4255;letter-spacing:.12em}
@@ -38,6 +38,45 @@ const style=document.createElement('style');style.textContent='#a459Panel{positi
 #a459Slots article button{min-width:95px}
 @media(max-width:650px){#a459Panel{padding:3vh 3vw}#a459Panel h2{font-size:20px;padding:7px 12px}#a459Slots{gap:5px}#a459Slots article{min-width:0;width:29vw;min-height:175px}#a459Slots article h3{font-size:16px}#a459Slots article p{font-size:12px}#a459Slots article .a459-emblem{width:45px;height:45px;font-size:26px}#a459Slots article button{min-width:0;font-size:12px}}
 `;document.head.append(style);
+/* A4-59-H: actual class sprite previews, using existing original sprite sheets. */
+const a459Art={
+ '劍俠':{url:'assets/swordsman-a430.webp',frame:[2,2,98,161]},
+ '遊俠':{url:'assets/ranger-a433.webp',frame:[0,0,91,164]},
+ '武者':{url:'assets/spearman-a433.webp',frame:[0,0,123,163]}
+};
+const a459ImageCache=new Map();
+function drawA459Portrait(canvas,job){
+ const art=a459Art[job];if(!art)return;
+ const ctx=canvas.getContext('2d');if(!ctx)return;
+ const paint=image=>{
+  if(!canvas.isConnected||!image.naturalWidth)return;
+  const [x,y,w,h]=art.frame;ctx.clearRect(0,0,canvas.width,canvas.height);
+  const scale=Math.min((canvas.width-10)/w,(canvas.height-8)/h);
+  ctx.imageSmoothingEnabled=false;
+  ctx.drawImage(image,x,y,w,h,(canvas.width-w*scale)/2,(canvas.height-h*scale)/2,w*scale,h*scale);
+ };
+ let image=a459ImageCache.get(job);
+ if(!image){image=new Image();a459ImageCache.set(job,image);image.onload=()=>{document.querySelectorAll('canvas[data-a459-job="'+job+'"]').forEach(el=>drawA459Portrait(el,job))};image.src=art.url}
+ if(image.complete&&image.naturalWidth)paint(image);
+}
+function decorateCreator(){
+ const card=byId('card');if(!card||byId('a459CreatorPreview'))return;
+ const heading=card.querySelector('h1');
+ if(heading)heading.textContent='建立你的江湖身分';
+ const preview=document.createElement('div');preview.id='a459CreatorPreview';
+ const portrait=document.createElement('canvas');portrait.width=110;portrait.height=150;portrait.dataset.a459Job='劍俠';
+ const description=document.createElement('p');description.id='a459JobDescription';
+ preview.append(portrait,description);card.insertBefore(preview,byId('nameInput'));
+ function refresh(){
+  const job=document.querySelector('.classBtn.sel')?.dataset.job||'劍俠';
+  portrait.dataset.a459Job=job;
+  description.textContent=({'劍俠':'劍行江湖 · 近身劍術','遊俠':'挽弓逐風 · 遠程弓術','武者':'長槍破陣 · 橫掃千軍'})[job];
+  drawA459Portrait(portrait,job);
+ }
+ card.querySelectorAll('.classBtn').forEach(button=>button.addEventListener('click',()=>queueMicrotask(refresh)));
+ refresh();
+}
+decorateCreator();
 function note(t){byId('a459Notice').textContent=t}
 function openSlots(){try{slots.read();panel.hidden=false;home.hidden=true;creator.hidden=true;render()}catch(e){warn(e.message)}}
 function returnToSelection(){
@@ -48,7 +87,7 @@ function returnToSelection(){
  openSlots();
 }
 returnButton.onclick=()=>openDialog('返回角色選擇','將先儲存目前角色進度，再返回角色選擇畫面。','儲存並返回',returnToSelection);
-function render(){const data=slots.read();const host=byId('a459Slots');host.replaceChildren();data.slots.forEach((c,i)=>{const box=document.createElement('article'),h=document.createElement('h3'),detail=document.createElement('p'),button=document.createElement('button'),emblem=document.createElement('div');box.dataset.job=c?.job||'';emblem.className='a459-emblem'+(c?'':' empty');emblem.textContent=c?({'劍俠':'劍','遊俠':'弓','武者':'槍'}[c.job]||'俠'):'＋';h.textContent=c?c.name:'＋ 空白欄位';detail.textContent=c?c.job+' · '+c.sex:'建立新角色';button.textContent=c?'進入江湖':'建立角色';button.onclick=()=>c?load(i):create(i);box.append(emblem,h,detail,button);if(c){const del=document.createElement('button');del.textContent='刪除角色';del.onclick=()=>remove(i,c);box.append(del)}host.append(box)});note('')}
+function render(){const data=slots.read();const host=byId('a459Slots');host.replaceChildren();data.slots.forEach((c,i)=>{const box=document.createElement('article'),h=document.createElement('h3'),detail=document.createElement('p'),button=document.createElement('button'),emblem=document.createElement('div');box.dataset.job=c?.job||'';emblem.className='a459-emblem'+(c?'':' empty');emblem.textContent=c?({'劍俠':'劍','遊俠':'弓','武者':'槍'}[c.job]||'俠'):'＋';h.textContent=c?c.name:'＋ 空白欄位';detail.textContent=c?c.job+' · '+c.sex:'建立新角色';button.textContent=c?'進入江湖':'建立角色';button.onclick=()=>c?load(i):create(i);if(c){const portrait=document.createElement('canvas');portrait.width=100;portrait.height=140;portrait.className='a459Portrait';portrait.dataset.a459Job=c.job;box.append(portrait);queueMicrotask(()=>drawA459Portrait(portrait,c.job))}else box.append(emblem);box.append(h,detail,button);if(c){const del=document.createElement('button');del.textContent='刪除角色';del.onclick=()=>remove(i,c);box.append(del)}host.append(box)});note('')}
 let pending=null;
 function create(i){pending=i;panel.hidden=true;creator.hidden=false;byId('nameInput').value='';byId('a459Sex').value='男';byId('cancelCreator').onclick=()=>{creator.hidden=true;panel.hidden=false;render()}}
 function load(i){try{const info=bridge.load(i);if(!info){note('此角色尚無遊戲進度，請先建立新的角色');return}active=i;expected=progress.getRaw(info.character.id);game.restore(info.progress);enter()}catch(e){note(e.message)}}

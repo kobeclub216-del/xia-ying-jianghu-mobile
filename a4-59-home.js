@@ -78,6 +78,40 @@ const style=document.createElement('style');style.textContent='#a459Panel{positi
  #a459Slots article{min-height:0;border-width:2px;outline-offset:-4px}
  #a459Panel h2{box-shadow:0 2px 5px #1b292a44}
 }
+
+/* A4-59-I1: use the game's existing illustrated bamboo trail, not synthetic landscape shapes. */
+#a459Panel{
+ background:#9cb8a3 url('assets/bamboo-trail-a447.webp') center 51%/cover no-repeat;
+}
+#a459Panel .a459-landscape{
+ background:linear-gradient(180deg,#f6e8c52e 0%,#d9e9cf12 40%,#173c3650 100%);
+}
+#a459Panel .a459-landscape .mountain,
+#a459Panel .a459-landscape .river,
+#a459Panel .a459-landscape .bamboo{display:none}
+#a459Panel .a459-content{background:none}
+#a459Panel h2{
+ background:linear-gradient(180deg,#514034f5,#272321f7);
+ border:2px solid #c9a56a;
+ outline:1px solid #433126;
+ outline-offset:2px;
+ box-shadow:inset 0 1px #eed8a977,0 3px 12px #162b2b77;
+}
+#a459Panel .a459-subtitle{
+ color:#fff0d4;
+ text-shadow:0 2px 4px #172e2d,0 0 7px #142d2c;
+}
+#a459Slots article{
+ background:linear-gradient(145deg,#fff7e9f0,#f0dfc8e9 58%,#dbc4a5eb);
+ border:2px solid #bd965c;
+ box-shadow:inset 0 0 0 2px #fff5dc8c,inset 0 0 0 5px #9a77492a,0 5px 18px #172d2d88;
+}
+#a459Slots article .a459Portrait{filter:drop-shadow(0 2px 2px #2e292666)}
+#a459Panel button:focus-visible{outline:2px solid #ffe0a1;outline-offset:2px}
+@media(orientation:landscape) and (max-height:520px){
+ #a459Panel{background-position:center 52%}
+ #a459Slots article{min-height:0}
+}
 `;document.head.append(style);
 /* A4-59-H: actual class sprite previews, using existing original sprite sheets. */
 const a459Art={

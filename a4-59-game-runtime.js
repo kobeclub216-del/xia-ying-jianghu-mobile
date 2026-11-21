@@ -1236,7 +1236,30 @@ drawCombatHUD();if(win){ctx.fillStyle='#000b';ctx.fillRect(0,0,W,H);ctx.fillStyl
 }else ctx.fillText(r[2],400,y+49);if(martialTab==='light'?i<2:i<2&&(martialTab==='sword'||i===1)){ctx.fillStyle=r[5]?'#355f82':'#444';ctx.fillRect(650,y+5,70,30);ctx.fillStyle=r[5]?'#fff4b0':'#999';ctx.textAlign='center';ctx.font='bold 16px sans-serif';ctx.fillText(martialTab==='light'?(equippedLight===r[4]?'卸下':'裝備'):(martialTab==='spear'?equippedSpear:martialTab==='bow'?equippedBow:equippedSword)===r[4]?'已裝備':'裝備',685,y+26);const actionReady=growth?canBreakthrough(key):r[3];ctx.fillStyle=actionReady?'#c8a45b':'#555';ctx.fillRect(730,y+5,75,30);ctx.fillStyle=actionReady?'#171b20':'#999';ctx.fillText(growth?'突破':'學習',767,y+26);ctx.textAlign='left'}});const testButtons=[[390,425,'測試：武學點 +3']];for(const [x,width,label] of testButtons){ctx.fillStyle='#7d5d31';ctx.fillRect(x,515,width,50);ctx.strokeStyle='#fff4b0';ctx.strokeRect(x,515,width,50);ctx.fillStyle='#fff4b0';ctx.font='bold 18px sans-serif';ctx.textAlign='center';ctx.fillText(label,x+width/2,547,width-12)}ctx.fillStyle='#ccc';ctx.font='14px sans-serif';ctx.fillText('※ 開發測試用途，正式版可移除',W/2,585);ctx.fillText('再點右上角「武學」關閉',W/2,605)}if(gameOver){ctx.fillStyle='#000c';ctx.fillRect(0,0,W,H);ctx.textAlign='center';ctx.fillStyle='white';ctx.font='bold 58px sans-serif';ctx.fillText('戰鬥失敗',W/2,270);ctx.font='26px sans-serif';ctx.fillText(playerName+'力竭倒下',W/2,325);ctx.fillStyle='#29465f';ctx.fillRect(480,500,320,110);ctx.strokeStyle='#fff';ctx.lineWidth=3;ctx.strokeRect(480,500,320,110);ctx.fillStyle='white';ctx.font='bold 32px sans-serif';ctx.fillText('重新挑戰',W/2,568)}if(statsOpen||martialOpen||bagOpen)drawPlayerHUD();drawCombatMenu();}
 
 // A4-58 game state adapter: the original drawing, combat and martial systems remain unchanged.
+/* A4-59-J: always initialize a new character from clean game defaults. */
+function resetA459NewCharacter(name,job){
+ if(!jobProfiles[job])throw Error('職業不正確');
+ playerName=name;playerJob=job;
+ level=1;exp=0;stats={strength:10,vitality:10,agility:10,inner:10};
+ statPoints=0;martialPoints=0;score=0;
+ swordPath={yude:1,peidao:0,qidi:0};equippedSword='yude';
+ bowPath={basic:1,rapid:0};equippedBow='basic';
+ spearPath={sweep:0};equippedSpear=null;
+ lightPath={water:0,wolf:0};equippedLight=null;
+ for(const [key,g] of Object.entries(martialGrowth)){
+  const fresh=createGrowth(g.tab,g.tier,g.trial,key==='yude'?1:1);
+  Object.assign(g,fresh);
+ }
+ martialTab=jobProfile().tab;
+ inventory=[jobProfile().starter];equipped=inventory[0];
+ p.x=310;p.y=390;p.hp=100;p.max=100;p.face=1;p.speed=260;p.attT=0;p.dodgeT=0;
+ bagOpen=false;statsOpen=false;martialOpen=false;combatMenuExpanded=false;bagNotice='';
+ rapidBurst=null;wolfDash=null;classDodgeMove=null;
+ startStage(1);
+ fx=[];projectiles=[];resetJoy();
+}
 window.jianghuGame = {
+ resetNewCharacter(name,job){resetA459NewCharacter(name,job);},
  startRendering() { fit(); requestAnimationFrame(loop); },
  snapshot() { return {
   playerName,playerJob,player:{x:p.x,y:p.y,hp:p.hp,max:p.max,face:p.face,speed:p.speed},

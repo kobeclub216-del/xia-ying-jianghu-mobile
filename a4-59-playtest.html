@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><title>俠影江湖｜A4-59-F 三角色整合實機測試</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171b20;touch-action:none;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",sans-serif}#wrap{position:fixed;inset:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:flex;align-items:center;justify-content:center}canvas{display:block;background:#9ab878;touch-action:none}#rotate{display:none;position:fixed;inset:0;background:#111;color:#fff;z-index:9;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:20px}#creator{position:fixed;inset:0;z-index:8;background:#111d;display:flex;align-items:center;justify-content:center;color:#fff}#card{width:min(560px,86vw);background:#1e2935;border:2px solid #ffffffaa;border-radius:14px;padding:22px;box-sizing:border-box;text-align:center}#card h1{font-size:28px;margin:0 0 18px}#nameInput{width:82%;font-size:20px;padding:10px;border-radius:8px;border:0;text-align:center}.classes{display:flex;gap:10px;justify-content:center;margin:18px 0}.classBtn{font-size:18px;padding:12px 20px;border-radius:9px;border:2px solid #ffffff55;background:#2b3540;color:#fff}.classBtn.sel{border-color:#fff4b0;background:#355f82}#startBtn{font-size:20px;font-weight:bold;padding:12px 38px;border:0;border-radius:9px;background:#c8a45b;color:#171b20}#hint{font-size:14px;color:#ccc;margin:12px 0 0}@media(orientation:portrait){#rotate{display:flex}}</style><link rel="stylesheet" href="home.css"></head><body>
+<html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover"><meta name="apple-mobile-web-app-capable" content="yes"><title>俠影江湖｜A4-59-G1 首頁載入優化測試</title><style>html,body{margin:0;width:100%;height:100%;overflow:hidden;background:#171b20;touch-action:none;font-family:-apple-system,BlinkMacSystemFont,"PingFang TC",sans-serif}#wrap{position:fixed;inset:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);display:flex;align-items:center;justify-content:center}canvas{display:block;background:#9ab878;touch-action:none}#rotate{display:none;position:fixed;inset:0;background:#111;color:#fff;z-index:9;align-items:center;justify-content:center;text-align:center;padding:30px;font-size:20px}#creator{position:fixed;inset:0;z-index:8;background:#111d;display:flex;align-items:center;justify-content:center;color:#fff}#card{width:min(560px,86vw);background:#1e2935;border:2px solid #ffffffaa;border-radius:14px;padding:22px;box-sizing:border-box;text-align:center}#card h1{font-size:28px;margin:0 0 18px}#nameInput{width:82%;font-size:20px;padding:10px;border-radius:8px;border:0;text-align:center}.classes{display:flex;gap:10px;justify-content:center;margin:18px 0}.classBtn{font-size:18px;padding:12px 20px;border-radius:9px;border:2px solid #ffffff55;background:#2b3540;color:#fff}.classBtn.sel{border-color:#fff4b0;background:#355f82}#startBtn{font-size:20px;font-weight:bold;padding:12px 38px;border:0;border-radius:9px;background:#c8a45b;color:#171b20}#hint{font-size:14px;color:#ccc;margin:12px 0 0}@media(orientation:portrait){#rotate{display:flex}}</style><link rel="stylesheet" href="home.css"></head><body>
 <main id="home" aria-labelledby="homeTitle">
  <div class="home-scene"><h1 id="homeTitle" class="home-sr">俠影江湖</h1>
  <nav class="home-menu" aria-label="主選單">
@@ -14,6 +14,19 @@
 <form method="dialog"><button id="dialogCancel" value="cancel" autofocus>關閉</button><button id="dialogConfirm" value="confirm" hidden>確認</button></form></dialog>
 <p id="saveWarning" role="status" hidden></p>
 <div id="wrap" hidden><canvas id="game"></canvas></div><div id="creator" hidden><div id="card"><h1>建立你的江湖角色</h1><input id="nameInput" maxlength="8" placeholder="輸入角色名稱"><div class="classes"><button class="classBtn sel" data-job="劍俠">劍俠</button><button class="classBtn" data-job="遊俠">遊俠</button><button class="classBtn" data-job="武者">武者</button></div><button id="startBtn">踏入江湖</button> <button id="cancelCreator" type="button">返回首頁</button><div id="hint">劍俠：劍　｜　遊俠：弓　｜　武者：長槍</div><div style="margin:12px"><label>角色性別：<select id="a459Sex"><option value="男">男性</option><option value="女">女性（美術待整合）</option></select></label></div></div></div><div id="rotate">請將 iPhone 轉成橫向遊玩</div><script>
+/* A4-59-G1: avoid requesting gameplay art before the user enters the game. */
+const a459DeferredImages=[];
+let a459GameAssetsStarted=false;
+function deferA459GameImage(image,url){
+ if(a459GameAssetsStarted){image.src=url;return}
+ a459DeferredImages.push([image,url]);
+}
+function startA459GameAssets(){
+ if(a459GameAssetsStarted)return;
+ a459GameAssetsStarted=true;
+ for(const [image,url] of a459DeferredImages)image.src=url;
+ a459DeferredImages.length=0;
+}
 const c=document.getElementById('game'),ctx=c.getContext('2d'),W=1280,H=720;
 const wrap=document.getElementById('wrap');
 let spriteAspect=1;
@@ -646,17 +659,17 @@ const swordsmanFrames={
 const swordsmanSprite=new Image();
 let swordsmanSpriteReady=false,swordAttackStage=0,swordAttackFace=1,swordDodgeFace=1;
 swordsmanSprite.onload=()=>{swordsmanSpriteReady=true};
-swordsmanSprite.src='assets/swordsman-a430.webp';
+deferA459GameImage(swordsmanSprite,'assets/swordsman-a430.webp');
 const swordsmanDodgeFrames=[[0,0,94,144,51,143],[150,0,127,128,72,127],[300,0,115,104,60,103],[0,180,102,119,52,118],[150,180,101,130,60,129],[300,180,100,145,54,144]];
 const swordsmanDodgeSprite=new Image();
 let swordsmanDodgeReady=false;
 swordsmanDodgeSprite.onload=()=>{swordsmanDodgeReady=true};
-swordsmanDodgeSprite.src='assets/swordsman-dodge.webp';
+deferA459GameImage(swordsmanDodgeSprite,'assets/swordsman-dodge.webp');
 const swordsmanSkillFrames=[[[0,0,68,155,48,154],[210,0,68,160,49,159],[420,0,75,156,49,155],[0,190,76,157,49,156],[210,190,74,155,49,154],[420,190,69,155,49,154]],[[0,380,162,126,92,125],[210,380,140,119,70,118],[420,380,162,113,70,112],[0,570,140,117,70,116],[210,570,182,117,74,116],[420,570,141,130,70,128]]];
 const swordsmanSkillSprite=new Image();
 let swordsmanSkillReady=false;
 swordsmanSkillSprite.onload=()=>{swordsmanSkillReady=true};
-swordsmanSkillSprite.src='assets/swordsman-skills.webp';
+deferA459GameImage(swordsmanSkillSprite,'assets/swordsman-skills.webp');
 
 function drawSwordsman(){
   const dodging=p.dodgeT>0||!!wolfDash;
@@ -709,13 +722,13 @@ const rangerFrames=[[[0,0,91,164,38,163],[220,0,91,165,38,164],[440,0,92,163,38,
 const rangerSprite=new Image();
 let rangerSpriteReady=false,rangerRapid=false,rangerShotFace=1;
 rangerSprite.onload=()=>{rangerSpriteReady=true};
-rangerSprite.src='assets/ranger-a433.webp';
+deferA459GameImage(rangerSprite,'assets/ranger-a433.webp');
 
 const classDodgeFrames=[[[0,0,95,144,42,143],[190,0,98,145,47,144],[380,0,98,148,46,147],[0,170,93,151,43,150],[190,170,90,154,43,153],[380,170,95,163,41,162]],[[0,340,124,144,52,143],[190,340,140,133,64,132],[380,340,157,115,62,114],[0,510,135,138,58,137],[190,510,133,149,60,148],[380,510,128,164,53,163]]];
 const classDodgeSprite=new Image();
 let classDodgeReady=false;
 classDodgeSprite.onload=()=>{classDodgeReady=true};
-classDodgeSprite.src='assets/ranger-spearman-dodge-a434.webp';
+deferA459GameImage(classDodgeSprite,'assets/ranger-spearman-dodge-a434.webp');
 
 function drawRanger(){
   const dodging=p.dodgeT>0||!!wolfDash;
@@ -761,7 +774,7 @@ const spearmanFrames=[[[0,0,123,163,43,162],[220,0,123,162,44,161],[440,0,126,16
 const spearmanSprite=new Image();
 let spearmanSpriteReady=false,spearmanSweep=false,spearmanAttackFace=1;
 spearmanSprite.onload=()=>{spearmanSpriteReady=true};
-spearmanSprite.src='assets/spearman-a433.webp';
+deferA459GameImage(spearmanSprite,'assets/spearman-a433.webp');
 
 function advanceClassDodgeMove(){
   const step=classDodgeMove;
@@ -826,7 +839,7 @@ const playerHurtFrames=[[0,0,117,156,71,155],[210,0,131,153,58,152],[420,0,135,1
 const playerHurtSprite=new Image();
 let playerHurtReady=false;
 playerHurtSprite.onload=()=>{playerHurtReady=true};
-playerHurtSprite.src='assets/class-hurt-a437.webp';
+deferA459GameImage(playerHurtSprite,'assets/class-hurt-a437.webp');
 
 function drawPlayerHurt(){
   if(!playerHurtReady||playerHurtT<=0||p.dodgeT>0||wolfDash)return false;
@@ -847,7 +860,7 @@ const banditFrames=[[[0,0,60,159,30,158],[210,0,95,157,48,156],[420,0,98,157,48,
 const banditSprite=new Image();
 let banditSpriteReady=false;
 banditSprite.onload=()=>{banditSpriteReady=true};
-banditSprite.src='assets/bandits-a438.webp';
+deferA459GameImage(banditSprite,'assets/bandits-a438.webp');
 const banditRunFrames=[[2,2,127,155,64,153],[162,2,80,156,49,156],[322,2,87,157,56,155],[2,174,131,156,66,154],[162,174,90,156,59,156],[322,174,93,152,61,149]];
 const banditScale=.49;
 // Distances in atlas pixels, measured from the planted boot in each half-stride.
@@ -856,14 +869,14 @@ const banditRunCycle=banditRunFrameEnds[banditRunFrameEnds.length-1];
 const banditRunSprite=new Image();
 let banditRunReady=false;
 banditRunSprite.onload=()=>{banditRunReady=true};
-banditRunSprite.src='assets/bandit-run-a450.webp';
+deferA459GameImage(banditRunSprite,'assets/bandit-run-a450.webp');
 
 
 const banditArcherFrames=[[0,0,86,160,32,159],[160,0,102,153,47,152],[320,0,125,163,43,162],[0,180,114,162,48,162],[160,180,94,152,41,151],[320,180,88,159,33,159]];
 const banditArcherSprite=new Image();
 let banditArcherReady=false;
 banditArcherSprite.onload=()=>{banditArcherReady=true};
-banditArcherSprite.src='assets/bandit-archer-a440.webp';
+deferA459GameImage(banditArcherSprite,'assets/bandit-archer-a440.webp');
 const archerRunFrames=[[2,2,110,155,55,153],[162,2,86,155,41,155],[322,2,110,155,59,153],[2,174,118,155,61,153],[162,174,90,155,41,155],[322,174,109,155,58,153]];
 // Keep the calibrated stride length while distributing the poses more evenly.
 const archerRunFrameEnds=[26,60,97,123,157,194];
@@ -872,7 +885,7 @@ const archerRunCycle=archerRunFrameEnds[archerRunFrameEnds.length-1];
 const archerRunSprite=new Image();
 let archerRunReady=false;
 archerRunSprite.onload=()=>{archerRunReady=true};
-archerRunSprite.src='assets/bandit-archer-run-a452.webp';
+deferA459GameImage(archerRunSprite,'assets/bandit-archer-run-a452.webp');
 
 
 // Measure actual movement after terrain and combat updates settle.

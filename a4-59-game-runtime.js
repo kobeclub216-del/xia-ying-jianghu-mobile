@@ -185,7 +185,7 @@ function startStage(next){stage=next;playerHurtT=0;wolfDash=null;classDodgeMove=
 function retry(){startStage(stage)}
 function enterMap2(){playerHurtT=0;wolfDash=null;classDodgeMove=null;mapId=2;win=false;gameOver=false;loot=null;bossSpawned=false;bossDefeated=false;fx=[];projectiles=[];rapidBurst=null;enemies=[];p.x=260;p.y=410;p.face=1;p.attT=p.dodgeT=0;resetJoy();fx.push({x:W/2,y:170,t:1.4,max:1.4,map:true,name:'黑風山寨外圍'})}
 const combatMenuIcons=[
-  {id:'character',x:928,label:'角色'},
+  {id:'character',x:928,label:'返回角色'},
   {id:'martial',x:1022,label:'武學'},
   {id:'bag',x:1116,label:'背包'}
 ];
@@ -1142,7 +1142,7 @@ function drawCombatMenuIcon({id,x,label},y){
     ctx.beginPath();ctx.arc(0,-10,9,Math.PI,0);ctx.stroke();
     ctx.beginPath();ctx.moveTo(-17,9);ctx.quadraticCurveTo(-17,-1,0,-1);ctx.quadraticCurveTo(17,-1,17,9);ctx.stroke();
   }else ctx.drawImage(combatMenuArt[id],-22,-31,44,44);
-  ctx.font='bold 15px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.font=id==='character'?'bold 12px sans-serif':'bold 15px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.fillStyle='#f4ddb0';ctx.fillText(label,0,23);
   if(id==='martial'&&martialPoints>0){
     ctx.fillStyle='#ffca78';ctx.beginPath();ctx.arc(26,-25,4,0,Math.PI*2);ctx.fill();

@@ -185,6 +185,7 @@ function startStage(next){stage=next;playerHurtT=0;wolfDash=null;classDodgeMove=
 function retry(){startStage(stage)}
 function enterMap2(){playerHurtT=0;wolfDash=null;classDodgeMove=null;mapId=2;win=false;gameOver=false;loot=null;bossSpawned=false;bossDefeated=false;fx=[];projectiles=[];rapidBurst=null;enemies=[];p.x=260;p.y=410;p.face=1;p.attT=p.dodgeT=0;resetJoy();fx.push({x:W/2,y:170,t:1.4,max:1.4,map:true,name:'黑風山寨外圍'})}
 const combatMenuIcons=[
+  {id:'character',x:928,label:'角色'},
   {id:'martial',x:1022,label:'武學'},
   {id:'bag',x:1116,label:'背包'}
 ];
@@ -215,6 +216,11 @@ function toggleCombatMenu(point){
   if(!combatMenuExpanded)return false;
   const menu=combatMenuIcons.find(({x})=>Math.abs(point.x-x)<=combatMenuTapWidth/2);
   if(!menu)return false;
+  if(menu.id==='character'){
+    window.gameHome?.requestReturnToSelection?.();
+    resetJoy();
+    return true;
+  }
   martialOpen=menu.id==='martial'&&!martialOpen;
   statsOpen=false;
   bagOpen=menu.id==='bag'&&!bagOpen;
@@ -1126,12 +1132,16 @@ function paintCombatMenuArt(id){
 const combatMenuArt=Object.fromEntries(combatMenuIcons.map(({id})=>[id,paintCombatMenuArt(id)]));
 
 function drawCombatMenuIcon({id,x,label},y){
-  const selected=id==='martial'?martialOpen:bagOpen;
+  const selected=id==='martial'?martialOpen:id==='bag'?bagOpen:false;
   hudPanel(x-35,y-35,70,70,selected);
   ctx.save();
   ctx.translate(x,y);
   ctx.imageSmoothingEnabled=false;
-  ctx.drawImage(combatMenuArt[id],-22,-31,44,44);
+  if(id==='character'){
+    ctx.strokeStyle='#f4ddb0';ctx.lineWidth=3;ctx.lineCap='round';
+    ctx.beginPath();ctx.arc(0,-10,9,Math.PI,0);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(-17,9);ctx.quadraticCurveTo(-17,-1,0,-1);ctx.quadraticCurveTo(17,-1,17,9);ctx.stroke();
+  }else ctx.drawImage(combatMenuArt[id],-22,-31,44,44);
   ctx.font='bold 15px sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.fillStyle='#f4ddb0';ctx.fillText(label,0,23);
   if(id==='martial'&&martialPoints>0){
@@ -1144,7 +1154,7 @@ function drawCombatMenu(){
   const x=combatMenuToggleX,y=combatMenuY;
   ctx.save();
   if(combatMenuExpanded){
-    hudPanel(975,y-42,191,84);
+    hudPanel(881,y-42,285,84);
     for(const menu of combatMenuIcons)drawCombatMenuIcon(menu,y);
   }
   hudPanel(x-31,y-28,62,56,combatMenuExpanded);

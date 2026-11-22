@@ -122,6 +122,32 @@ const style=document.createElement('style');style.textContent='#a459Panel{positi
 }
 #a459Slots article .a459-emblem.empty::before{width:50%;height:4px}
 #a459Slots article .a459-emblem.empty::after{width:4px;height:50%}
+
+/* A4-59-L: one-screen iPhone landscape creator with readable, consistent controls. */
+#creator{box-sizing:border-box;padding:max(6px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));overflow:hidden;background:linear-gradient(#13241e99,#13241eaa),url('assets/bamboo-trail-a447.webp') center/cover no-repeat}
+#creator[hidden]{display:none!important}
+#creator #card{max-height:100%;overflow:auto;color:#f5e6c8}
+#creator #nameInput{box-sizing:border-box;border:1px solid #b59663;background:#f5ead3;color:#302920}
+#creator #a459Sex{font:inherit;background:#f5ead3;color:#302920;border:1px solid #b59663;border-radius:5px;padding:4px}
+#creator #cancelCreator{background:#3a3431;color:#f3dfb6;border:1px solid #b59663;border-radius:6px;padding:8px 15px}
+#creator #startBtn{border:1px solid #e7c585;border-radius:6px}
+#creator .classBtn{border:1px solid #b59663;background:#3b3833;color:#f4dfb6}
+#creator .classBtn.sel{background:#655037}
+#creator #hint{color:#e7d6b4}
+@media(orientation:landscape) and (max-height:520px){
+ #creator #card{width:min(900px,96vw);height:min(100%,420px);max-height:100%;padding:clamp(6px,1.4vh,12px) clamp(10px,2vw,18px);display:grid;grid-template-columns:minmax(100px,30%) minmax(0,1fr);grid-template-rows:auto auto auto auto auto auto;column-gap:clamp(8px,2vw,24px);row-gap:clamp(2px,.7vh,6px);align-items:center;justify-items:center;overflow:hidden}
+ #creator #card h1{grid-column:1/-1;font-size:clamp(17px,4vh,23px);margin:0;line-height:1.2}
+ #creator #a459CreatorPreview{grid-column:1;grid-row:2/7;display:flex;flex-direction:column;gap:3px;margin:0;align-self:center;min-height:0}
+ #creator #a459CreatorPreview canvas{width:auto;height:clamp(60px,26vh,130px);aspect-ratio:11/15}
+ #creator #a459JobDescription{font-size:clamp(10px,2.5vh,13px);margin:0;white-space:normal}
+ #creator #nameInput{grid-column:2;grid-row:2;width:100%;font-size:clamp(13px,3vh,17px);padding:5px}
+ #creator .classes{grid-column:2;grid-row:3;display:flex;gap:clamp(3px,1vw,10px);margin:0;width:100%}
+ #creator .classBtn{flex:1;min-width:0;padding:5px 3px;font-size:clamp(12px,2.9vh,16px)}
+ #creator #hint{grid-column:2;grid-row:4;margin:0;font-size:clamp(10px,2.4vh,13px)}
+ #creator #card>div:has(>label>#a459Sex){grid-column:2;grid-row:5;margin:0!important;font-size:clamp(11px,2.5vh,14px)}
+ #creator #startBtn{grid-column:2;grid-row:6;justify-self:start;margin-left:6%;padding:6px 12px;font-size:clamp(12px,2.8vh,16px)}
+ #creator #cancelCreator{grid-column:2;grid-row:6;justify-self:end;margin-right:6%;padding:6px 12px;font-size:clamp(12px,2.8vh,16px)}
+}
 `;document.head.append(style);
 /* A4-59-H: actual class sprite previews, using existing original sprite sheets. */
 const a459Art={

@@ -155,9 +155,14 @@ const a459Art={
  '遊俠':{url:'assets/ranger-a433.webp',frame:[0,0,91,164]},
  '武者':{url:'assets/spearman-a433.webp',frame:[0,0,123,163]}
 };
+const a459FemaleArt={
+ '劍俠':{url:'assets/a459-female-swordswoman.svg',frame:[0,0,128,180]},
+ '遊俠':{url:'assets/a459-female-archer.svg',frame:[0,0,128,180]},
+ '武者':{url:'assets/a459-female-spearman.svg',frame:[0,0,128,180]}
+};
 const a459ImageCache=new Map();
-function drawA459Portrait(canvas,job){
- const art=a459Art[job];if(!art)return;
+function drawA459Portrait(canvas,job,sex=canvas.dataset.a459Sex||'男'){
+ const art=sex==='女'?a459FemaleArt[job]:a459Art[job];if(!art)return;
  const ctx=canvas.getContext('2d');if(!ctx)return;
  const paint=image=>{
   if(!canvas.isConnected||!image.naturalWidth)return;
@@ -166,8 +171,9 @@ function drawA459Portrait(canvas,job){
   ctx.imageSmoothingEnabled=false;
   ctx.drawImage(image,x,y,w,h,(canvas.width-w*scale)/2,(canvas.height-h*scale)/2,w*scale,h*scale);
  };
- let image=a459ImageCache.get(job);
- if(!image){image=new Image();a459ImageCache.set(job,image);image.onload=()=>{document.querySelectorAll('canvas[data-a459-job="'+job+'"]').forEach(el=>drawA459Portrait(el,job))};image.src=art.url}
+ const cacheKey=job+'-'+sex;
+ let image=a459ImageCache.get(cacheKey);
+ if(!image){image=new Image();a459ImageCache.set(cacheKey,image);image.onload=()=>{document.querySelectorAll('canvas[data-a459-job="'+job+'"][data-a459-sex="'+sex+'"]').forEach(el=>drawA459Portrait(el,job,sex))};image.src=art.url}
  if(image.complete&&image.naturalWidth)paint(image);
 }
 function decorateCreator(){
@@ -182,8 +188,9 @@ function decorateCreator(){
   const job=document.querySelector('.classBtn.sel')?.dataset.job||'劍俠';
   portrait.dataset.a459Job=job;
   const sex=byId('a459Sex').value;
-  description.textContent=({'劍俠':'劍行江湖 · 近身劍術','遊俠':'挽弓逐風 · 遠程弓術','武者':'長槍破陣 · 橫掃千軍'})[job]+(sex==='女'?' · 女性立繪待完成':'');
-  portrait.setAttribute('aria-label',sex==='女'?'目前暫用共用職業預覽，女性立繪尚未完成':job+'職業人物預覽');
+  portrait.dataset.a459Sex=sex;
+  description.textContent=({'劍俠':'劍行江湖 · 近身劍術','遊俠':'挽弓逐風 · 遠程弓術','武者':'長槍破陣 · 橫掃千軍'})[job]+(sex==='女'?' · 女性造型預覽（動畫製作中）':'');
+  portrait.setAttribute('aria-label',sex==='女'?'女性職業造型預覽，遊戲動畫尚未完成':job+'職業人物預覽');
   drawA459Portrait(portrait,job);
  }
  card.querySelectorAll('.classBtn').forEach(button=>button.addEventListener('click',()=>queueMicrotask(refresh)));
@@ -202,7 +209,7 @@ function returnToSelection(){
 }
 function requestReturnToSelection(){if(!playing||active===null)return;openDialog('返回角色選擇','將先儲存目前角色進度，再返回角色選擇畫面。','儲存並返回',returnToSelection)}
 returnButton.onclick=requestReturnToSelection;
-function render(){const data=slots.read();const host=byId('a459Slots');host.replaceChildren();data.slots.forEach((c,i)=>{const box=document.createElement('article'),h=document.createElement('h3'),detail=document.createElement('p'),button=document.createElement('button'),emblem=document.createElement('div');box.dataset.job=c?.job||'';emblem.className='a459-emblem'+(c?'':' empty');emblem.textContent=c?({'劍俠':'劍','遊俠':'弓','武者':'槍'}[c.job]||'俠'):'';h.textContent=c?c.name:'＋ 空白欄位';detail.textContent=c?c.job+' · '+c.sex:'建立新角色';button.textContent=c?'進入江湖':'建立角色';button.onclick=()=>c?load(i):create(i);if(c){const portrait=document.createElement('canvas');portrait.width=100;portrait.height=140;portrait.className='a459Portrait';portrait.dataset.a459Job=c.job;box.append(portrait);queueMicrotask(()=>drawA459Portrait(portrait,c.job))}else box.append(emblem);box.append(h,detail,button);if(c){const del=document.createElement('button');del.textContent='刪除角色';del.onclick=()=>remove(i,c);box.append(del)}host.append(box)});note('')}
+function render(){const data=slots.read();const host=byId('a459Slots');host.replaceChildren();data.slots.forEach((c,i)=>{const box=document.createElement('article'),h=document.createElement('h3'),detail=document.createElement('p'),button=document.createElement('button'),emblem=document.createElement('div');box.dataset.job=c?.job||'';emblem.className='a459-emblem'+(c?'':' empty');emblem.textContent=c?({'劍俠':'劍','遊俠':'弓','武者':'槍'}[c.job]||'俠'):'';h.textContent=c?c.name:'＋ 空白欄位';detail.textContent=c?c.job+' · '+c.sex:'建立新角色';button.textContent=c?'進入江湖':'建立角色';button.onclick=()=>c?load(i):create(i);if(c){const portrait=document.createElement('canvas');portrait.width=100;portrait.height=140;portrait.className='a459Portrait';portrait.dataset.a459Job=c.job;portrait.dataset.a459Sex=c.sex||'男';box.append(portrait);queueMicrotask(()=>drawA459Portrait(portrait,c.job,c.sex||'男'))}else box.append(emblem);box.append(h,detail,button);if(c){const del=document.createElement('button');del.textContent='刪除角色';del.onclick=()=>remove(i,c);box.append(del)}host.append(box)});note('')}
 let pending=null;
 function create(i){pending=i;panel.hidden=true;creator.hidden=false;byId('nameInput').value='';byId('a459Sex').value='男';byId('cancelCreator').onclick=()=>{creator.hidden=true;panel.hidden=false;render()}}
 function load(i){try{const info=bridge.load(i);if(!info){note('此角色尚無遊戲進度，請先建立新的角色');return}active=i;expected=progress.getRaw(info.character.id);game.restore(info.progress);enter()}catch(e){note(e.message)}}

@@ -159,27 +159,39 @@ const a459Art={
  '遊俠':{url:'assets/ranger-a433.webp',frame:[0,0,91,164]},
  '武者':{url:'assets/spearman-a433.webp',frame:[0,0,123,163]}
 };
+/* A4-59-M4: source PNG portraits; use existing previews until the PNG assets are deployed. */
 const a459FemaleArt={
- '劍俠':{url:'assets/a459-female-swordswoman.svg',frame:[0,0,128,180]},
- '遊俠':{url:'assets/a459-female-archer.svg',frame:[0,0,128,180]},
- '武者':{url:'assets/a459-female-spearman.svg',frame:[0,0,128,180]}
+ '劍俠':{url:'assets/female-swordswoman.png',fallback:'assets/a459-female-swordswoman.svg'},
+ '遊俠':{url:'assets/female-ranger.png',fallback:'assets/a459-female-archer.svg'},
+ '武者':{url:'assets/female-spearman.png',fallback:'assets/a459-female-spearman.svg'}
 };
 const a459ImageCache=new Map();
 function drawA459Portrait(canvas,job,sex=canvas.dataset.a459Sex||'男'){
  const art=sex==='女'?a459FemaleArt[job]:a459Art[job];if(!art)return;
  const ctx=canvas.getContext('2d');if(!ctx)return;
+ const cacheKey=job+'-'+sex;
  const paint=image=>{
   if(!canvas.isConnected||!image.naturalWidth)return;
-  const [x,y,w,h]=art.frame;ctx.clearRect(0,0,canvas.width,canvas.height);
+  const [x,y,w,h]=art.frame||[0,0,image.naturalWidth,image.naturalHeight];
+  ctx.clearRect(0,0,canvas.width,canvas.height);
   const scale=Math.min((canvas.width-10)/w,(canvas.height-8)/h);
-  ctx.imageSmoothingEnabled=false;
+  ctx.imageSmoothingEnabled=sex==='女';
   ctx.drawImage(image,x,y,w,h,(canvas.width-w*scale)/2,(canvas.height-h*scale)/2,w*scale,h*scale);
  };
- const cacheKey=job+'-'+sex;
  let image=a459ImageCache.get(cacheKey);
- if(!image){image=new Image();a459ImageCache.set(cacheKey,image);image.onload=()=>{document.querySelectorAll('canvas[data-a459-job="'+job+'"][data-a459-sex="'+sex+'"]').forEach(el=>drawA459Portrait(el,job,sex))};image.src=art.url}
+ if(!image){
+  image=new Image();
+  a459ImageCache.set(cacheKey,image);
+  image.onload=()=>document.querySelectorAll('canvas[data-a459-job="'+job+'"][data-a459-sex="'+sex+'"]').forEach(el=>drawA459Portrait(el,job,sex));
+  image.onerror=()=>{
+   if(art.fallback&&image.src.indexOf(art.fallback)===-1){image.src=art.fallback;return}
+   console.warn('角色預覽素材無法載入：',job,sex);
+  };
+  image.src=art.url;
+ }
  if(image.complete&&image.naturalWidth)paint(image);
 }
+
 function decorateCreator(){
  const card=byId('card');if(!card||byId('a459CreatorPreview'))return;
  const heading=card.querySelector('h1');

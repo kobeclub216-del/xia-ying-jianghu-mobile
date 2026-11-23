@@ -123,6 +123,10 @@ const style=document.createElement('style');style.textContent='#a459Panel{positi
 #a459Slots article .a459-emblem.empty::before{width:50%;height:4px}
 #a459Slots article .a459-emblem.empty::after{width:4px;height:50%}
 
+/* A4-59-M3: restore visual hierarchy to female character cards without changing saved data. */
+#a459Slots article:has(.a459Portrait[data-a459-sex="女"]) .a459Portrait{height:clamp(78px,26vh,126px);width:auto;max-width:100%;aspect-ratio:5/7;image-rendering:auto}
+#a459Slots article:has(.a459Portrait[data-a459-sex="女"]){justify-content:center}
+#creator #a459CreatorPreview canvas[data-a459-sex="女"]{height:clamp(94px,32vh,150px);width:auto;image-rendering:auto}
 /* A4-59-L: one-screen iPhone landscape creator with readable, consistent controls. */
 #creator{box-sizing:border-box;padding:max(6px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));overflow:hidden;background:linear-gradient(#13241e99,#13241eaa),url('assets/bamboo-trail-a447.webp') center/cover no-repeat}
 #creator[hidden]{display:none!important}

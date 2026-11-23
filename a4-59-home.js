@@ -181,10 +181,13 @@ function decorateCreator(){
  function refresh(){
   const job=document.querySelector('.classBtn.sel')?.dataset.job||'劍俠';
   portrait.dataset.a459Job=job;
-  description.textContent=({'劍俠':'劍行江湖 · 近身劍術','遊俠':'挽弓逐風 · 遠程弓術','武者':'長槍破陣 · 橫掃千軍'})[job];
+  const sex=byId('a459Sex').value;
+  description.textContent=({'劍俠':'劍行江湖 · 近身劍術','遊俠':'挽弓逐風 · 遠程弓術','武者':'長槍破陣 · 橫掃千軍'})[job]+(sex==='女'?' · 女性立繪待完成':'');
+  portrait.setAttribute('aria-label',sex==='女'?'目前暫用共用職業預覽，女性立繪尚未完成':job+'職業人物預覽');
   drawA459Portrait(portrait,job);
  }
  card.querySelectorAll('.classBtn').forEach(button=>button.addEventListener('click',()=>queueMicrotask(refresh)));
+ byId('a459Sex').addEventListener('change',refresh);
  refresh();
 }
 decorateCreator();
@@ -211,6 +214,6 @@ const volume=byId('homeVolume'),sound=byId('homeSound');let a;try{a=JSON.parse(l
 byId('previewSound').onclick=()=>{};
 byId('homeExit').onclick=()=>openDialog('離開遊戲','可以關閉此分頁離開遊戲。','',null);
 setInterval(()=>{if(playing&&!document.hidden)persist()},2000);addEventListener('pagehide',()=>{if(playing)persist()});document.addEventListener('visibilitychange',()=>{if(playing&&document.hidden)persist()});
-return {requestReturnToSelection,startNew(){if(playing||creator.hidden||pending===null)return;const i=pending;const name=byId('nameInput').value.trim()||'無名俠客';const job=document.querySelector('.classBtn.sel')?.dataset.job||'劍俠';const sex=byId('a459Sex').value;try{if(!name||[...name].length>8)throw Error('角色姓名須為 1～8 字');const data=slots.read();if(data.slots[i]||data.slots.some(c=>c?.name===name))throw Error('角色欄位已被使用或姓名重複');game.resetNewCharacter(name,job);const state=game.snapshot();if(!bridge.validateProgress(state))throw Error('遊戲初始進度不完整');slots.create(i,{name,job,sex});const c=slots.read().slots[i];active=i;expected=null;expected=progress.save(c.id,state,null);pending=null;enter()}catch(e){warn('建立角色失敗：'+e.message)}}};
+return {requestReturnToSelection,startNew(){if(playing||creator.hidden||pending===null)return;const i=pending;const name=byId('nameInput').value.trim()||'無名俠客';const job=document.querySelector('.classBtn.sel')?.dataset.job||'劍俠';const sex=byId('a459Sex').value;try{if(!name||[...name].length>8)throw Error('角色姓名須為 1～8 字');const data=slots.read();if(data.slots[i]||data.slots.some(c=>c?.name===name))throw Error('角色欄位已被使用或姓名重複');game.resetNewCharacter(name,job);const state=game.snapshot();if(!bridge.validateProgress(state))throw Error('遊戲初始進度不完整');slots.create(i,{name,job,sex});const c=slots.read().slots[i];try{expected=progress.save(c.id,state,null)}catch(saveError){try{slots.remove(i,name)}catch(rollbackError){throw Error('初始存檔失敗且角色欄位無法回復：'+saveError.message+'；'+rollbackError.message)}throw saveError}active=i;pending=null;enter()}catch(e){warn('建立角色失敗：'+e.message)}}};
 })();
 window.gameHome=gameHome;

@@ -672,6 +672,15 @@ deferA459GameImage(a459FemaleWalk,'assets/female-swordswoman-m7-walk.png');
 const a459FemaleFrameWidth=224,a459FemaleFrameHeight=280,a459FemaleBaseline=274;
 const a459FemaleIdleTops=[28,56,51,26];
 const a459FemaleWalkTops=[16,40,40,35,43,43,55,16];
+// M8-B: shared sprite rendering; frame selection and combat timing remain unchanged.
+function a459DrawActorFrame(sprite,rect,face,scale=.5,lift=0){
+ const [sx,sy,w,h,root,sole]=rect;
+ ctx.save();ctx.translate(p.x,p.y+33);ctx.scale(face,1);
+ ctx.fillStyle='#26362e55';ctx.beginPath();ctx.ellipse(0,0,30,9,0,0,Math.PI*2);ctx.fill();
+ ctx.scale(spriteZoom*spriteAspect,spriteZoom);
+ ctx.drawImage(sprite,sx,sy,w,h,-root*scale,-sole*scale-lift,w*scale,h*scale);
+ ctx.restore();
+}
 function drawA459FemaleLocomotion(){
  if(a459VisualSex!=='女'||p.dodgeT>0||wolfDash||p.attT>0)return false;
  if(a459FemaleIdle.naturalWidth!==896||a459FemaleIdle.naturalHeight!==280||
@@ -682,12 +691,8 @@ function drawA459FemaleLocomotion(){
  // M7-A1: hold a stable idle pose until aligned breathing frames are available.
  const frame=moving?Math.floor(last/80)%tops.length:0;
  const scale=81/(a459FemaleBaseline-tops[frame]);
- ctx.save();ctx.translate(p.x,p.y+33);ctx.scale(p.face,1);
- ctx.fillStyle='#26362e55';ctx.beginPath();ctx.ellipse(0,0,30,9,0,0,Math.PI*2);ctx.fill();
- ctx.scale(spriteZoom*spriteAspect,spriteZoom);
- ctx.drawImage(sheet,frame*a459FemaleFrameWidth,0,a459FemaleFrameWidth,a459FemaleFrameHeight,
-   -134*scale,-a459FemaleBaseline*scale,a459FemaleFrameWidth*scale,a459FemaleFrameHeight*scale);
- ctx.restore();return true;
+ a459DrawActorFrame(sheet,[frame*a459FemaleFrameWidth,0,a459FemaleFrameWidth,a459FemaleFrameHeight,134,a459FemaleBaseline],p.face,scale);
+ return true;
 }
 function drawSwordsman(){
   if(drawA459FemaleLocomotion())return;
@@ -728,14 +733,8 @@ function drawSwordsman(){
   const [sx,sy,w,h,root,sole]=frames[frame];
   const airborne=frames===swordsmanDodgeFrames?frame===2:frames===swordsmanFrames.run&&(frame===3||frame===7);
   const lift=airborne?2:0;
-  ctx.save();
-  ctx.translate(p.x,p.y+33);
-  ctx.scale(dodging?swordDodgeFace:swordSwing?swordAttackFace:p.face,1);
-  ctx.fillStyle='#26362e55';
-  ctx.beginPath();ctx.ellipse(0,0,30,9,0,0,Math.PI*2);ctx.fill();
-  ctx.scale(spriteZoom*spriteAspect,spriteZoom);
-  ctx.drawImage(sprite,sx,sy,w,h,-root/2,-sole/2-lift,w/2,h/2);
-  ctx.restore();
+  a459DrawActorFrame(sprite,[sx,sy,w,h,root,sole],dodging?swordDodgeFace:swordSwing?swordAttackFace:p.face,.5,lift);
+
 }
 const rangerFrames=[[[0,0,91,164,38,163],[220,0,91,165,38,164],[440,0,92,163,38,162],[0,190,130,155,69,154],[220,190,105,132,44,131],[440,190,134,154,73,153]],[[0,380,92,163,35,162],[220,380,93,163,36,162],[440,380,109,163,42,162],[0,570,110,163,45,162],[220,570,108,163,47,162],[440,570,92,163,34,162]]];
 const rangerSprite=new Image();
@@ -780,13 +779,8 @@ function drawRanger(){
     lift=frame===4?2:0;
   }
   const [sx,sy,w,h,root,sole]=frames[frame];
-  ctx.save();
-  ctx.translate(p.x,p.y+33);ctx.scale(facing,1);
-  ctx.fillStyle='#26362e55';
-  ctx.beginPath();ctx.ellipse(0,0,30,9,0,0,Math.PI*2);ctx.fill();
-  ctx.scale(spriteZoom*spriteAspect,spriteZoom);
-  ctx.drawImage(sprite,sx,sy,w,h,-root/2,-sole/2-lift,w/2,h/2);
-  ctx.restore();
+  a459DrawActorFrame(sprite,[sx,sy,w,h,root,sole],facing,.5,lift);
+
 }
 
 const spearmanFrames=[[[0,0,123,163,43,162],[220,0,123,162,44,161],[440,0,126,161,48,160],[0,190,146,149,69,148],[220,190,136,130,63,129],[440,190,145,148,71,147]],[[0,380,129,157,58,156],[220,380,186,150,68,149],[440,380,146,155,54,154],[0,570,152,147,61,146],[220,570,199,130,64,128],[440,570,131,163,42,162]]];
@@ -845,13 +839,8 @@ function drawSpearman(){
   const [sx,sy,w,h,root,sole]=frames[frame];
   const lift=dodging&&frames===classDodgeFrames[1]?[0,1,7,4,0,0][frame]:
     frames===spearmanFrames[0]&&frame===4?2:0;
-  ctx.save();
-  ctx.translate(p.x,p.y+33);ctx.scale(face,1);
-  ctx.fillStyle='#26362e55';
-  ctx.beginPath();ctx.ellipse(0,0,30,9,0,0,Math.PI*2);ctx.fill();
-  ctx.scale(spriteZoom*spriteAspect,spriteZoom);
-  ctx.drawImage(sprite,sx,sy,w,h,-root/2,-sole/2-lift,w/2,h/2);
-  ctx.restore();
+  a459DrawActorFrame(sprite,[sx,sy,w,h,root,sole],face,.5,lift);
+
 }
 
 const playerHurtFrames=[[0,0,117,156,71,155],[210,0,131,153,58,152],[420,0,135,153,46,152],[0,190,103,163,52,162],[210,190,97,162,43,161],[420,190,142,163,57,162]];

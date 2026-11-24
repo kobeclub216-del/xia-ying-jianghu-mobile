@@ -124,9 +124,9 @@ const style=document.createElement('style');style.textContent='#a459Panel{positi
 #a459Slots article .a459-emblem.empty::after{width:4px;height:50%}
 
 /* A4-59-M3: restore visual hierarchy to female character cards without changing saved data. */
-#a459Slots article:has(.a459Portrait[data-a459-sex="女"]) .a459Portrait{height:clamp(78px,26vh,126px);width:auto;max-width:100%;aspect-ratio:5/7;image-rendering:auto}
+#a459Slots article:has(.a459Portrait[data-a459-sex="女"]) .a459Portrait{height:clamp(78px,26vh,126px);width:auto;max-width:100%;aspect-ratio:1/1;image-rendering:auto}
 #a459Slots article:has(.a459Portrait[data-a459-sex="女"]){justify-content:center}
-#creator #a459CreatorPreview canvas[data-a459-sex="女"]{height:clamp(94px,32vh,150px);width:auto;image-rendering:auto}
+#creator #a459CreatorPreview canvas[data-a459-sex="女"]{height:clamp(94px,32vh,150px);width:auto;aspect-ratio:1/1;image-rendering:auto}
 /* A4-59-L: one-screen iPhone landscape creator with readable, consistent controls. */
 #creator{box-sizing:border-box;padding:max(6px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(6px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));overflow:hidden;background:linear-gradient(#13241e99,#13241eaa),url('assets/bamboo-trail-a447.webp') center/cover no-repeat}
 #creator[hidden]{display:none!important}
@@ -174,9 +174,12 @@ function drawA459Portrait(canvas,job,sex=canvas.dataset.a459Sex||'男'){
  const paint=image=>{
   if(!canvas.isConnected||!image.naturalWidth)return;
   const [x,y,w,h]=art.frame||[0,0,image.naturalWidth,image.naturalHeight];
-  const scale=Math.min((canvas.width-10)/w,(canvas.height-8)/h);
-  ctx.imageSmoothingEnabled=sex==='女';
-  ctx.drawImage(image,x,y,w,h,(canvas.width-w*scale)/2,(canvas.height-h*scale)/2,w*scale,h*scale);
+  const female=sex==='女';
+  if(female&&canvas.width!==canvas.height){canvas.width=canvas.height;}
+  if(!female&&canvas.width===canvas.height){canvas.width=canvas.height===150?110:100;}
+  const scale=Math.min((canvas.width-10)/w,(canvas.height-(female?12:8))/h);
+  ctx.imageSmoothingEnabled=female;
+  ctx.drawImage(image,x,y,w,h,(canvas.width-w*scale)/2,female?canvas.height-6-h*scale:(canvas.height-h*scale)/2,w*scale,h*scale);
  };
  let image=a459ImageCache.get(cacheKey);
  if(!image){

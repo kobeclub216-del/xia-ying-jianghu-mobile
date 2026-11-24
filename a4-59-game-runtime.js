@@ -679,7 +679,8 @@ function drawA459FemaleLocomotion(){
  const moving=Math.hypot(joy.dx,joy.dy)>.08;
  const sheet=moving?a459FemaleWalk:a459FemaleIdle;
  const tops=moving?a459FemaleWalkTops:a459FemaleIdleTops;
- const frame=Math.floor(last/(moving?80:140))%tops.length;
+ // M7-A1: hold a stable idle pose until aligned breathing frames are available.
+ const frame=moving?Math.floor(last/80)%tops.length:0;
  const scale=81/(a459FemaleBaseline-tops[frame]);
  ctx.save();ctx.translate(p.x,p.y+33);ctx.scale(p.face,1);
  ctx.fillStyle='#26362e55';ctx.beginPath();ctx.ellipse(0,0,30,9,0,0,Math.PI*2);ctx.fill();

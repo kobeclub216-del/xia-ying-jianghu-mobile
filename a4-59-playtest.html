@@ -7,7 +7,7 @@
   <button id="homeNew"><span aria-hidden="true">▤</span>初入江湖</button>
   <button id="homeSettings"><span aria-hidden="true">⚙</span>遊戲設定</button>
   <button id="homeExit"><span aria-hidden="true">⇥</span>離開遊戲</button>
- </nav><span class="home-version">A4-59-M7-A · 女性劍俠動畫測試</span></div>
+ </nav><span class="home-version">A4-59-M8-C3 · 劍俠跑步測試</span></div>
 </main>
 <dialog id="homeDialog" aria-labelledby="dialogTitle"><h2 id="dialogTitle"></h2><p id="dialogMessage" hidden></p>
 <div id="audioSettings" hidden><label>音量 <input id="homeVolume" type="range" min="0" max="100" step="5"><output id="volumeLabel" for="homeVolume"></output></label><label><input id="homeSound" type="checkbox">首頁操作音效</label><button id="previewSound" type="button">試聽音效</button></div>
@@ -26,7 +26,7 @@
    if(ready||loading)return;
    loading=true;
    try{
-     for(const path of ['a4-59-game-runtime.js','character-slots.js','character-progress.js','character-game-bridge.js','a4-59-home.js'])await loadScript(path);
+     for(const path of ['a4-59-run-animation.js','a4-59-game-runtime.js','character-slots.js','character-progress.js','character-game-bridge.js','a4-59-home.js'])await loadScript(path);
      ready=true;warning.hidden=true;
      const target=pending;pending=null;
      if(target)document.getElementById(target).click();

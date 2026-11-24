@@ -667,6 +667,11 @@ let a459VisualSex='男';
 const a459FemaleIdle=new Image(),a459FemaleWalk=new Image();
 deferA459GameImage(a459FemaleIdle,'assets/female-swordswoman-m7-idle.png');
 deferA459GameImage(a459FemaleWalk,'assets/female-swordswoman-m7-walk.png');
+const a459RunImages = {};
+for (const sex of ['男','女']) {
+ const image = a459RunImages[sex] = new Image();
+ deferA459GameImage(image,'assets/'+a459RunAnimation.clip(sex).file);
+}
 // Source frames have different transparent top margins. Normalize their
 // visible height to the original swordsman's 81-unit height and plant the feet.
 const a459FemaleFrameWidth=224,a459FemaleFrameHeight=280,a459FemaleBaseline=274;
@@ -695,6 +700,14 @@ function drawA459FemaleLocomotion(){
  return true;
 }
 function drawSwordsman(){
+  const moving=Math.hypot(joy.dx,joy.dy)>.08;
+  const runImage=a459RunImages[a459VisualSex];
+  if(moving&&p.attT<=0&&p.dodgeT<=0&&!wolfDash&&a459RunAnimation.ready(runImage)){
+    const clip=a459RunAnimation.clip(a459VisualSex);
+    // The sheets already encode airborne frames above their fixed sole baseline.
+    a459DrawActorFrame(runImage,a459RunAnimation.frame(clip,last),p.face,clip.scale);
+    return;
+  }
   if(drawA459FemaleLocomotion())return;
   const dodging=p.dodgeT>0||!!wolfDash;
   const swordSwing=p.attT>0&&swordAttackStage>0;
@@ -702,7 +715,6 @@ function drawSwordsman(){
     drawSwordsmanFallback();
     return;
   }
-  const moving=Math.hypot(joy.dx,joy.dy)>.08;
   let frames=swordsmanFrames[moving?'run':'idle'];
   let frame=Math.floor(last/(moving?80:140))%frames.length;
   let sprite=swordsmanSprite;

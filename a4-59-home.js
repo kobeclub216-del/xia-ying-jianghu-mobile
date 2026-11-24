@@ -169,11 +169,11 @@ const a459ImageCache=new Map();
 function drawA459Portrait(canvas,job,sex=canvas.dataset.a459Sex||'男'){
  const art=sex==='女'?a459FemaleArt[job]:a459Art[job];if(!art)return;
  const ctx=canvas.getContext('2d');if(!ctx)return;
+ ctx.clearRect(0,0,canvas.width,canvas.height);
  const cacheKey=job+'-'+sex;
  const paint=image=>{
   if(!canvas.isConnected||!image.naturalWidth)return;
   const [x,y,w,h]=art.frame||[0,0,image.naturalWidth,image.naturalHeight];
-  ctx.clearRect(0,0,canvas.width,canvas.height);
   const scale=Math.min((canvas.width-10)/w,(canvas.height-8)/h);
   ctx.imageSmoothingEnabled=sex==='女';
   ctx.drawImage(image,x,y,w,h,(canvas.width-w*scale)/2,(canvas.height-h*scale)/2,w*scale,h*scale);
@@ -227,7 +227,7 @@ function requestReturnToSelection(){if(!playing||active===null)return;openDialog
 returnButton.onclick=requestReturnToSelection;
 function render(){const data=slots.read();const host=byId('a459Slots');host.replaceChildren();data.slots.forEach((c,i)=>{const box=document.createElement('article'),h=document.createElement('h3'),detail=document.createElement('p'),button=document.createElement('button'),emblem=document.createElement('div');box.dataset.job=c?.job||'';emblem.className='a459-emblem'+(c?'':' empty');emblem.textContent=c?({'劍俠':'劍','遊俠':'弓','武者':'槍'}[c.job]||'俠'):'';h.textContent=c?c.name:'＋ 空白欄位';detail.textContent=c?c.job+' · '+c.sex:'建立新角色';button.textContent=c?'進入江湖':'建立角色';button.onclick=()=>c?load(i):create(i);if(c){const portrait=document.createElement('canvas');portrait.width=100;portrait.height=140;portrait.className='a459Portrait';portrait.dataset.a459Job=c.job;portrait.dataset.a459Sex=c.sex||'男';box.append(portrait);queueMicrotask(()=>drawA459Portrait(portrait,c.job,c.sex||'男'))}else box.append(emblem);box.append(h,detail,button);if(c){const del=document.createElement('button');del.textContent='刪除角色';del.onclick=()=>remove(i,c);box.append(del)}host.append(box)});note('')}
 let pending=null;
-function create(i){pending=i;panel.hidden=true;creator.hidden=false;byId('nameInput').value='';byId('a459Sex').value='男';byId('cancelCreator').onclick=()=>{creator.hidden=true;panel.hidden=false;render()}}
+function create(i){pending=i;panel.hidden=true;creator.hidden=false;byId('nameInput').value='';const sex=byId('a459Sex');sex.value='男';sex.dispatchEvent(new Event('change'));byId('cancelCreator').onclick=()=>{creator.hidden=true;panel.hidden=false;render()}}
 function load(i){try{const info=bridge.load(i);if(!info){note('此角色尚無遊戲進度，請先建立新的角色');return}active=i;expected=progress.getRaw(info.character.id);game.restore(info.progress);enter()}catch(e){note(e.message)}}
 function remove(i,c){const answer=prompt('輸入「'+c.name+'」確認刪除該角色及其進度');if(answer!==c.name)return;try{const raw=progress.getRaw(c.id);progress.remove(c.id,raw);slots.remove(i,c.name);render()}catch(e){note(e.message)}}
 byId('a459Back').onclick=()=>{panel.hidden=true;home.hidden=false};

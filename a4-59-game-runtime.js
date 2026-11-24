@@ -662,7 +662,26 @@ let swordsmanSkillReady=false;
 swordsmanSkillSprite.onload=()=>{swordsmanSkillReady=true};
 deferA459GameImage(swordsmanSkillSprite,'assets/swordsman-skills.webp');
 
+// M7-A: female locomotion sheets, activated only when both assets are valid.
+let a459VisualSex='男';
+const a459FemaleIdle=new Image(),a459FemaleWalk=new Image();
+deferA459GameImage(a459FemaleIdle,'assets/female-swordswoman-m7-idle.png');
+deferA459GameImage(a459FemaleWalk,'assets/female-swordswoman-m7-walk.png');
+function drawA459FemaleLocomotion(){
+ if(a459VisualSex!=='女'||p.dodgeT>0||wolfDash||p.attT>0)return false;
+ if(a459FemaleIdle.naturalWidth!==896||a459FemaleIdle.naturalHeight!==280||
+    a459FemaleWalk.naturalWidth!==1792||a459FemaleWalk.naturalHeight!==280)return false;
+ const moving=Math.hypot(joy.dx,joy.dy)>.08;
+ const sheet=moving?a459FemaleWalk:a459FemaleIdle;
+ const frame=Math.floor(last/(moving?85:180))%(moving?8:4);
+ ctx.save();ctx.translate(p.x,p.y+33);ctx.scale(p.face,1);
+ ctx.fillStyle='#26362e55';ctx.beginPath();ctx.ellipse(0,0,30,9,0,0,Math.PI*2);ctx.fill();
+ ctx.scale(spriteZoom*spriteAspect,spriteZoom);
+ ctx.drawImage(sheet,frame*224,0,224,280,-40,-100,80,100);
+ ctx.restore();return true;
+}
 function drawSwordsman(){
+  if(drawA459FemaleLocomotion())return;
   const dodging=p.dodgeT>0||!!wolfDash;
   const swordSwing=p.attT>0&&swordAttackStage>0;
   if(!swordsmanSpriteReady){
@@ -1269,6 +1288,7 @@ function resetA459NewCharacter(name,job){
  fx=[];projectiles=[];resetJoy();
 }
 window.jianghuGame = {
+ setVisualSex(sex){a459VisualSex=sex==='女'?'女':'男';},
  resetNewCharacter(name,job){resetA459NewCharacter(name,job);},
  startRendering() { fit(); requestAnimationFrame(loop); },
  snapshot() { return {

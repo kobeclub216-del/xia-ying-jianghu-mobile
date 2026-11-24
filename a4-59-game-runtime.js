@@ -667,17 +667,25 @@ let a459VisualSex='男';
 const a459FemaleIdle=new Image(),a459FemaleWalk=new Image();
 deferA459GameImage(a459FemaleIdle,'assets/female-swordswoman-m7-idle.png');
 deferA459GameImage(a459FemaleWalk,'assets/female-swordswoman-m7-walk.png');
+// Source frames have different transparent top margins. Normalize their
+// visible height to the original swordsman's 81-unit height and plant the feet.
+const a459FemaleFrameWidth=224,a459FemaleFrameHeight=280,a459FemaleBaseline=274;
+const a459FemaleIdleTops=[28,56,51,26];
+const a459FemaleWalkTops=[16,40,40,35,43,43,55,16];
 function drawA459FemaleLocomotion(){
  if(a459VisualSex!=='女'||p.dodgeT>0||wolfDash||p.attT>0)return false;
  if(a459FemaleIdle.naturalWidth!==896||a459FemaleIdle.naturalHeight!==280||
     a459FemaleWalk.naturalWidth!==1792||a459FemaleWalk.naturalHeight!==280)return false;
  const moving=Math.hypot(joy.dx,joy.dy)>.08;
  const sheet=moving?a459FemaleWalk:a459FemaleIdle;
- const frame=Math.floor(last/(moving?85:180))%(moving?8:4);
+ const tops=moving?a459FemaleWalkTops:a459FemaleIdleTops;
+ const frame=Math.floor(last/(moving?80:140))%tops.length;
+ const scale=81/(a459FemaleBaseline-tops[frame]);
  ctx.save();ctx.translate(p.x,p.y+33);ctx.scale(p.face,1);
  ctx.fillStyle='#26362e55';ctx.beginPath();ctx.ellipse(0,0,30,9,0,0,Math.PI*2);ctx.fill();
  ctx.scale(spriteZoom*spriteAspect,spriteZoom);
- ctx.drawImage(sheet,frame*224,0,224,280,-40,-100,80,100);
+ ctx.drawImage(sheet,frame*a459FemaleFrameWidth,0,a459FemaleFrameWidth,a459FemaleFrameHeight,
+   -134*scale,-a459FemaleBaseline*scale,a459FemaleFrameWidth*scale,a459FemaleFrameHeight*scale);
  ctx.restore();return true;
 }
 function drawSwordsman(){

@@ -215,8 +215,9 @@ function decorateCreator(){
   portrait.dataset.a459Job=job;
   const sex=byId('a459Sex').value;
   portrait.dataset.a459Sex=sex;
-  description.textContent=({'劍俠':'劍行江湖 · 近身劍術','遊俠':'挽弓逐風 · 遠程弓術','武者':'長槍破陣 · 橫掃千軍'})[job]+(sex==='女'?' · 女性造型預覽（動畫製作中）':'');
-  portrait.setAttribute('aria-label',sex==='女'?'女性職業造型預覽，遊戲動畫尚未完成':job+'職業人物預覽');
+  const femaleAnimation=job==='劍俠'?'站立與走路動畫已整合':'動畫製作中';
+  description.textContent=({'劍俠':'劍行江湖 · 近身劍術','遊俠':'挽弓逐風 · 遠程弓術','武者':'長槍破陣 · 橫掃千軍'})[job]+(sex==='女'?' · '+femaleAnimation:'');
+  portrait.setAttribute('aria-label',sex==='女'?'女性職業造型預覽，'+femaleAnimation:job+'職業人物預覽');
   drawA459Portrait(portrait,job);
  }
  card.querySelectorAll('.classBtn').forEach(button=>button.addEventListener('click',()=>queueMicrotask(refresh)));

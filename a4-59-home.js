@@ -180,6 +180,13 @@ function drawA459Portrait(canvas,job,sex=canvas.dataset.a459Sex||'男'){
   const scale=Math.min((canvas.width-10)/w,(canvas.height-(female?12:8))/h);
   ctx.imageSmoothingEnabled=female;
   ctx.drawImage(image,x,y,w,h,(canvas.width-w*scale)/2,female?canvas.height-6-h*scale:(canvas.height-h*scale)/2,w*scale,h*scale);
+  // M6: mask the isolated artifact at the far right of the original ranger PNG.
+  // Preserve the source image, its dimensions, and the M5 portrait alignment.
+  if(female&&job==='遊俠'&&image.naturalWidth===160&&image.naturalHeight===186&&image.src.endsWith('/female-ranger.png')){
+   const dx=(canvas.width-w*scale)/2,dy=canvas.height-6-h*scale;
+   const left=Math.floor(dx+150*scale)-1,top=Math.floor(dy+145*scale)-1;
+   ctx.clearRect(left,top,Math.ceil(dx+160*scale)-left+1,Math.ceil(dy+166*scale)-top+1);
+  }
  };
  let image=a459ImageCache.get(cacheKey);
  if(!image){
